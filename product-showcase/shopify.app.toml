@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "b6a4e275c229d9a4af4005966ff4ccc5"
-application_url = "https://example.com"
+application_url = "https://product-showcase-l1lg1a2ci-aditya-chopra-s-projects.vercel.app"
 embedded = true
 name = "product-showcase"
 
