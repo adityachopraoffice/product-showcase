@@ -6,11 +6,13 @@ import { loginErrorMessage } from "./error.server";
 
 export const loader = async ({ request }) => {
   const errors = loginErrorMessage(await login(request));
+
   return { errors };
 };
 
 export const action = async ({ request }) => {
   const errors = loginErrorMessage(await login(request));
+
   return {
     errors,
   };
