@@ -101,9 +101,9 @@ export default function App() {
         {/* Features */}
         <div style={{ marginTop: "2rem", borderTop: "1px solid #e8f5e9", paddingTop: "1.5rem" }}>
           {[
-            ["🛍️", "Smart Product Display", "Showcase your products with beautiful, customizable templates"],
-            ["⚡", "Lightning Fast", "Optimized for performance and seamless Shopify integration"],
-            ["🎨", "Fully Customizable", "Tailor the look and feel to match your brand perfectly"],
+            ["✦", "Smart Product Display", "Showcase your products with beautiful, customizable templates"],
+            ["✦", "Lightning Fast", "Optimized for performance and seamless Shopify integration"],
+            ["✦", "Fully Customizable", "Tailor the look and feel to match your brand perfectly"],
           ].map(([icon, title, desc]) => (
             <div key={title} style={{ display: "flex", gap: "0.75rem", marginBottom: "1rem" }}>
               <span style={{ fontSize: "1.2rem" }}>{icon}</span>
