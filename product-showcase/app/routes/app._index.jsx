@@ -149,7 +149,7 @@ export default function Index() {
                                 ? "0 4px 10px rgba(0, 188, 212, 0.3)"
                                 : "0 4px 10px rgba(156, 110, 222, 0.3)"
                             }}>
-                              <span>🔒 {template.tier.toUpperCase()}</span>
+                              <span> {template.tier.toUpperCase()}</span>
                             </div>
                           </div>
                         )}
@@ -195,7 +195,7 @@ export default function Index() {
                                 : "0 4px 12px rgba(156, 110, 222, 0.25)"
                             }}
                           >
-                            🔒 Upgrade to {template.tier.toUpperCase()}
+                             Upgrade to {template.tier.toUpperCase()}
                           </button>
                         ) : (
                           <button
@@ -429,7 +429,7 @@ export default function Index() {
                       : "0 4px 12px rgba(156, 110, 222, 0.25)"
                   }}
                 >
-                  🔒 Upgrade to {selectedPreview.tier.toUpperCase()} to Use
+                   Upgrade to {selectedPreview.tier.toUpperCase()} to Use
                 </button>
               ) : (
                 <button
