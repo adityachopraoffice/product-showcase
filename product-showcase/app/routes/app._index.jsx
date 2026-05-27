@@ -1,14 +1,19 @@
 import { useState } from "react";
-import { useLoaderData, useLocation, useNavigate } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { TEMPLATES } from "../data/templates";
 import { TemplatePreview } from "./app.showcase.$id";
+import db from "../db.server";
 
 export const loader = async ({ request }) => {
   const { session } = await authenticate.admin(request);
   const shop = session?.shop || "test-store.myshopify.com";
-  return { templates: TEMPLATES, shop };
+  const shopPlan = await db.shopPlan.findUnique({
+    where: { shop: session.shop },
+  });
+  const userPlan = shopPlan?.plan || "free";
+  return { templates: TEMPLATES, shop, userPlan };
 };
 
 const validPlan = (plan) => ["free", "starter", "pro", "enterprise"].includes(plan) ? plan : "free";
@@ -23,12 +28,10 @@ const isTemplateLocked = (templateTier, plan) => {
 };
 
 export default function Index() {
-  const { templates, shop } = useLoaderData();
-  const location = useLocation();
+  const { templates, shop, userPlan } = useLoaderData();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("templates"); // 'templates' | 'manage' | 'customization'
-  const userPlan = getPlanFromSearch(location.search);
-  const [selectedPreview, setSelectedPreview] = useState(null); // template object for modal preview
+  const [activeTab, setActiveTab] = useState("templates");
+  const [selectedPreview, setSelectedPreview] = useState(null);
   const [customizer, setCustomizer] = useState({
     primaryColor: "#5C6AC4",
     fontFamily: "Inter",
