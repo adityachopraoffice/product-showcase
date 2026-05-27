@@ -11,39 +11,51 @@ export const loader = async ({ request }) => {
   });
   return { templates: TEMPLATES, userPlan: shopPlan?.plan || "free" };
 };
+
 export default function ShowcaseGallery() {
   const { templates, userPlan } = useLoaderData();
   const freeTemplates = templates.filter((t) => t.tier === "free");
   const starterTemplates = templates.filter((t) => t.tier === "starter");
   const proTemplates = templates.filter((t) => t.tier === "pro");
 
+  const canAccess = (tier) => {
+    if (tier === "free") return true;
+    if (tier === "starter") return userPlan === "starter" || userPlan === "pro";
+    if (tier === "pro") return userPlan === "pro";
+    return false;
+  };
+
   return (
     <s-page heading="Product Showcase Gallery">
-      <Link
-        slot="primary-action"
-        to="/app/pricing"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          textDecoration: "none",
-          background: "linear-gradient(135deg, #9C6ADE 0%, #764ba2 100%)",
-          color: "#fff",
-          border: "none",
-          borderRadius: "6px",
-          padding: "8px 16px",
-          fontWeight: 700,
-          fontSize: "13px",
-          boxShadow: "0 4px 15px rgba(156, 110, 222, 0.2)",
-          cursor: "pointer",
-        }}
-      >
-        Upgrade to Pro
-      </Link>
+      {userPlan !== "pro" && (
+        <Link
+          slot="primary-action"
+          to="/app/pricing"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            textDecoration: "none",
+            background: "linear-gradient(135deg, #9C6ADE 0%, #764ba2 100%)",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            padding: "8px 16px",
+            fontWeight: 700,
+            fontSize: "13px",
+            boxShadow: "0 4px 15px rgba(156, 110, 222, 0.2)",
+            cursor: "pointer",
+          }}
+        >
+          Upgrade to Pro
+        </Link>
+      )}
 
       <s-section>
         <s-paragraph>
           Choose from {templates.length} professionally designed showcase templates.
-          Upgrade your plan to unlock more layouts and start customizing your storefront.
+          {userPlan === "free" && " Upgrade your plan to unlock more layouts."}
+          {userPlan === "starter" && " Upgrade to Pro to unlock all templates."}
+          {userPlan === "pro" && " You have access to all templates!"}
         </s-paragraph>
       </s-section>
 
@@ -58,15 +70,17 @@ export default function ShowcaseGallery() {
 
       {/* Starter Templates */}
       <s-section heading={`Starter Templates (${starterTemplates.length})`}>
-        <s-paragraph>
-          <s-link href="/app/pricing">Upgrade to Starter</s-link> to unlock these templates.
-        </s-paragraph>
+        {!canAccess("starter") && (
+          <s-paragraph>
+            <s-link href="/app/pricing">Upgrade to Starter</s-link> to unlock these templates.
+          </s-paragraph>
+        )}
         <div style={gridStyle}>
           {starterTemplates.map((template) => (
             <TemplateCard
               key={template.id}
               template={template}
-              locked={userPlan === "free"}
+              locked={!canAccess("starter")}
             />
           ))}
         </div>
@@ -74,15 +88,17 @@ export default function ShowcaseGallery() {
 
       {/* Pro Templates */}
       <s-section heading={`Pro Templates (${proTemplates.length})`}>
-        <s-paragraph>
-          <s-link href="/app/pricing">Upgrade to Pro</s-link> to unlock these premium templates.
-        </s-paragraph>
+        {!canAccess("pro") && (
+          <s-paragraph>
+            <s-link href="/app/pricing">Upgrade to Pro</s-link> to unlock these premium templates.
+          </s-paragraph>
+        )}
         <div style={gridStyle}>
           {proTemplates.map((template) => (
             <TemplateCard
               key={template.id}
               template={template}
-              locked={userPlan === "free" || userPlan === "starter"}
+              locked={!canAccess("pro")}
             />
           ))}
         </div>
@@ -107,19 +123,17 @@ function TemplateCard({ template, locked }) {
         e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.06)";
       }}
     >
-      {/* Thumbnail */}
       <div style={{ position: "relative" }}>
         <div style={{ ...thumbnailStyle, background: template.previewBg }}>
           <MiniMockup id={template.id} />
           {locked && (
             <div style={lockOverlayStyle}>
               <div style={lockBadgeStyle(template.tier)}>
-                <span>🔒 {template.tier.toUpperCase()}</span>
+                <span>{template.tier.toUpperCase()}</span>
               </div>
             </div>
           )}
         </div>
-        {/* Tier badge */}
         <div style={{
           position: "absolute",
           top: "10px",
@@ -136,7 +150,6 @@ function TemplateCard({ template, locked }) {
         </div>
       </div>
 
-      {/* Content */}
       <div style={{ padding: "16px" }}>
         <div style={{ marginBottom: "8px" }}>
           <div style={{ fontSize: "15px", fontWeight: 700, color: "#202223", marginBottom: "6px" }}>
@@ -147,7 +160,6 @@ function TemplateCard({ template, locked }) {
           </div>
         </div>
 
-        {/* Tags */}
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "14px" }}>
           {template.tags.map((tag) => (
             <span key={tag} style={tagStyle(template.accent)}>
@@ -156,7 +168,6 @@ function TemplateCard({ template, locked }) {
           ))}
         </div>
 
-        {/* Action */}
         {locked ? (
           <Link
             to="/app/pricing"
@@ -170,11 +181,14 @@ function TemplateCard({ template, locked }) {
                 : "0 4px 12px rgba(156, 110, 222, 0.25)",
             }}
           >
-            🔒 Unlock with {template.tier === "starter" ? "Starter" : "Pro"}
+            Unlock with {template.tier === "starter" ? "Starter" : "Pro"}
           </Link>
         ) : (
-          <Link to={`/app/showcase/${template.id}`} style={{ ...btnStyle, background: template.accent, color: "#fff", textDecoration: "none" }}>
-            Preview Template →
+          <Link
+            to={`/app/showcase/${template.id}`}
+            style={{ ...btnStyle, background: template.accent, color: "#fff", textDecoration: "none" }}
+          >
+            Preview Template
           </Link>
         )}
       </div>
@@ -247,81 +261,12 @@ function MiniMockup({ id }) {
   return mockups[id] || mockups["modern-showcase"];
 }
 
-// Styles
-const gridStyle = {
-  display: "grid",
-  gridTemplateColumns: "repeat(3, 1fr)",
-  gap: "20px",
-};
+const gridStyle = { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" };
+const cardStyle = { background: "#fff", borderRadius: "12px", border: "1px solid #e1e3e5", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", transition: "transform 0.2s ease, box-shadow 0.2s ease" };
+const thumbnailStyle = { height: "160px", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: "12px" };
+const lockOverlayStyle = { position: "absolute", inset: 0, background: "rgba(246, 246, 247, 0.25)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(1.5px)" };
+const lockBadgeStyle = (tier) => ({ background: tier === "starter" ? "linear-gradient(135deg, #00BCD4 0%, #0097A7 100%)" : "linear-gradient(135deg, #9C6ADE 0%, #764ba2 100%)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "20px", padding: "8px 16px", color: "#fff", display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 700, boxShadow: tier === "starter" ? "0 4px 12px rgba(0, 188, 212, 0.35)" : "0 4px 12px rgba(156, 110, 222, 0.35)" });
+const tagStyle = (accent) => ({ background: `${accent}18`, color: accent, fontSize: "11px", fontWeight: 600, padding: "3px 9px", borderRadius: "20px", border: `1px solid ${accent}30` });
+const btnStyle = { display: "block", textAlign: "center", padding: "9px 16px", borderRadius: "6px", fontSize: "13px", fontWeight: 600, cursor: "pointer", border: "none" };
 
-const cardStyle = {
-  background: "#fff",
-  borderRadius: "12px",
-  border: "1px solid #e1e3e5",
-  overflow: "hidden",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  transition: "transform 0.2s ease, box-shadow 0.2s ease",
-};
-
-const thumbnailStyle = {
-  height: "160px",
-  position: "relative",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-  padding: "12px",
-};
-
-const lockOverlayStyle = {
-  position: "absolute",
-  inset: 0,
-  background: "rgba(246, 246, 247, 0.25)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  backdropFilter: "blur(1.5px)",
-};
-
-const lockBadgeStyle = (tier) => ({
-  background: tier === "starter"
-    ? "linear-gradient(135deg, #00BCD4 0%, #0097A7 100%)"
-    : "linear-gradient(135deg, #9C6ADE 0%, #764ba2 100%)",
-  border: "1px solid rgba(255,255,255,0.2)",
-  borderRadius: "20px",
-  padding: "8px 16px",
-  color: "#fff",
-  display: "flex",
-  alignItems: "center",
-  gap: "6px",
-  fontSize: "12px",
-  fontWeight: 700,
-  boxShadow: tier === "starter"
-    ? "0 4px 12px rgba(0, 188, 212, 0.35)"
-    : "0 4px 12px rgba(156, 110, 222, 0.35)",
-});
-
-const tagStyle = (accent) => ({
-  background: `${accent}18`,
-  color: accent,
-  fontSize: "11px",
-  fontWeight: 600,
-  padding: "3px 9px",
-  borderRadius: "20px",
-  border: `1px solid ${accent}30`,
-});
-
-const btnStyle = {
-  display: "block",
-  textAlign: "center",
-  padding: "9px 16px",
-  borderRadius: "6px",
-  fontSize: "13px",
-  fontWeight: 600,
-  cursor: "pointer",
-  border: "none",
-};
-
-export const headers = (headersArgs) => {
-  return boundary.headers(headersArgs);
-};
+export const headers = (headersArgs) => boundary.headers(headersArgs);
