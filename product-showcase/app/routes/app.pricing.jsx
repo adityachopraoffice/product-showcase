@@ -45,7 +45,12 @@ export default function Pricing() {
 
   useEffect(() => {
     if (actionData?.confirmationUrl) {
-      window.open(actionData.confirmationUrl, "_top");
+       const redirect = window?.shopify?.navigation?.redirect;
+    if (redirect) {
+      redirect(actionData.confirmationUrl);
+    } else {
+      window.top.location.href = actionData.confirmationUrl;
+    }      
     }
     if (actionData?.success) {
       setCurrentPlan(actionData.plan);
