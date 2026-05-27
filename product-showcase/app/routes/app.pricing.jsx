@@ -30,10 +30,8 @@ export const action = async ({ request }) => {
   }
 
   const returnUrl = `${process.env.SHOPIFY_APP_URL}/app/billing/confirm?plan=${plan}&shop=${session.shop}`;
-  console.log("RETURN URL:", returnUrl); // temporary log
   const { createBillingCharge } = await import("../billing.server");
   const confirmationUrl = await createBillingCharge(admin, plan, returnUrl);
-  console.log("CONFIRMATION URL:", confirmationUrl); // temporary log
 
   return { confirmationUrl };
 };
@@ -44,9 +42,14 @@ export default function Pricing() {
   const submit = useSubmit();
   const navigate = useNavigate();
   const [currentPlan, setCurrentPlan] = useState(initialPlan);
+
   useEffect(() => {
     if (actionData?.confirmationUrl) {
-      window.open(actionData.confirmationUrl, "_top");
+      if (typeof window !== "undefined" && window.shopify) {
+        window.shopify.redirectToExternalUrl(actionData.confirmationUrl);
+      } else {
+        window.open(actionData.confirmationUrl, "_top");
+      }
     }
     if (actionData?.success) {
       setCurrentPlan(actionData.plan);
@@ -54,6 +57,7 @@ export default function Pricing() {
       setTimeout(() => navigate("/app"), 1500);
     }
   }, [actionData]);
+
   const handleUpgrade = (planId) => {
     if (planId === "free") {
       setCurrentPlan(planId);
