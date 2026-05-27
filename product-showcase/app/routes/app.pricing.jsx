@@ -30,8 +30,10 @@ export const action = async ({ request }) => {
   }
 
   const returnUrl = `${process.env.SHOPIFY_APP_URL}/app/billing/confirm?plan=${plan}&shop=${session.shop}`;
+  console.log("RETURN URL:", returnUrl); // temporary log
   const { createBillingCharge } = await import("../billing.server");
   const confirmationUrl = await createBillingCharge(admin, plan, returnUrl);
+  console.log("CONFIRMATION URL:", confirmationUrl); // temporary log
 
   return { confirmationUrl };
 };
