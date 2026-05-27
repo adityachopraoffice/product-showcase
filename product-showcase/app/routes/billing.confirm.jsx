@@ -8,7 +8,7 @@ export const loader = async ({ request }) => {
   const shop = url.searchParams.get("shop");
 
   if (!chargeId || !plan || !shop) {
-    return redirect("/app/pricing");
+    return redirect(`https://${shop}/admin/apps`);
   }
 
   await db.shopPlan.upsert({
@@ -17,5 +17,6 @@ export const loader = async ({ request }) => {
     create: { shop, plan },
   });
 
-  return redirect("/app");
+  // Redirect back into Shopify admin embedded app
+  return redirect(`https://${shop}/admin/apps/product-showcase-14`);
 };
