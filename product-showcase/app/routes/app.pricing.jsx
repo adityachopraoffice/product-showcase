@@ -1,8 +1,8 @@
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
-import { useLoaderData, useSubmit, useNavigate } from "react-router";
+import { useLoaderData, useSubmit, useNavigate, useActionData } from "react-router";
 import { PLANS } from "../data/templates";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import db from "../db.server";
 
 const validPlan = (plan) => ["free", "starter", "pro", "enterprise"].includes(plan) ? plan : "free";
@@ -16,34 +16,54 @@ export const loader = async ({ request }) => {
 };
 
 export const action = async ({ request }) => {
-  const { session } = await authenticate.admin(request);
+  const { session, admin } = await authenticate.admin(request);
   const formData = await request.formData();
   const plan = validPlan(formData.get("plan"));
-  await db.shopPlan.upsert({
-    where: { shop: session.shop },
-    update: { plan },
-    create: { shop: session.shop, plan },
-  });
-  return { success: true, plan };
+
+  if (plan === "free") {
+    await db.shopPlan.upsert({
+      where: { shop: session.shop },
+      update: { plan },
+      create: { shop: session.shop, plan },
+    });
+    return { success: true, plan };
+  }
+
+  const returnUrl = `${process.env.SHOPIFY_APP_URL}/app/billing/confirm?plan=${plan}&shop=${session.shop}`;
+  const { createBillingCharge } = await import("../billing.server");
+  const confirmationUrl = await createBillingCharge(admin, plan, returnUrl);
+
+  return { confirmationUrl };
 };
 
 export default function Pricing() {
   const { plans, currentPlan: initialPlan } = useLoaderData();
+  const actionData = useActionData();
   const submit = useSubmit();
   const navigate = useNavigate();
   const [currentPlan, setCurrentPlan] = useState(initialPlan);
-
+  useEffect(() => {
+    if (actionData?.confirmationUrl) {
+      window.open(actionData.confirmationUrl, "_top");
+    }
+    if (actionData?.success) {
+      setCurrentPlan(actionData.plan);
+      window.shopify?.toast.show(`Switched to ${actionData.plan.toUpperCase()} plan!`);
+      setTimeout(() => navigate("/app"), 1500);
+    }
+  }, [actionData]);
   const handleUpgrade = (planId) => {
-    setCurrentPlan(planId);
-    if (typeof window !== "undefined" && window.shopify) {
-      window.shopify.toast.show(`Successfully switched to ${planId.toUpperCase()} plan!`);
+    if (planId === "free") {
+      setCurrentPlan(planId);
+      const formData = new FormData();
+      formData.append("plan", planId);
+      submit(formData, { method: "post" });
+      setTimeout(() => navigate("/app"), 1500);
+      return;
     }
     const formData = new FormData();
     formData.append("plan", planId);
-    submit(formData, { method: "post", action: "/app/pricing" });
-    setTimeout(() => {
-      navigate("/app");
-    }, 1500);
+    submit(formData, { method: "post" });
   };
 
   return (
