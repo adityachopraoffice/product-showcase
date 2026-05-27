@@ -26,3 +26,10 @@ model Session {
   refreshToken        String?
   refreshTokenExpires DateTime?
 }
+
+model ShopPlan {
+  id        String   @id @default(cuid())
+  shop      String   @unique
+  plan      String   @default("free")
+  updatedAt DateTime @updatedAt
+}
