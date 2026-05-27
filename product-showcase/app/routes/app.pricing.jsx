@@ -1,6 +1,6 @@
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
-import { useLoaderData, useSubmit } from "react-router";
+import { useLoaderData, useSubmit, useNavigate } from "react-router";
 import { PLANS } from "../data/templates";
 import { useState } from "react";
 import db from "../db.server";
@@ -30,6 +30,7 @@ export const action = async ({ request }) => {
 export default function Pricing() {
   const { plans, currentPlan: initialPlan } = useLoaderData();
   const submit = useSubmit();
+  const navigate = useNavigate();
   const [currentPlan, setCurrentPlan] = useState(initialPlan);
 
   const handleUpgrade = (planId) => {
@@ -39,7 +40,10 @@ export default function Pricing() {
     }
     const formData = new FormData();
     formData.append("plan", planId);
-    submit(formData, { method: "post" });
+    submit(formData, { method: "post", action: "/app/pricing" });
+    setTimeout(() => {
+      navigate("/app");
+    }, 1500);
   };
 
   return (
