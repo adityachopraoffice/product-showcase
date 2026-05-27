@@ -15,6 +15,7 @@
       "routes/auth.login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/auth.$": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/_index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.billing.confirm": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.additional": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.showcase": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.showcase.$id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
@@ -79,6 +80,15 @@
         "file": "app/routes/app.jsx",
         "path": "app",
         "config": {}
+      },
+      "routes/app.billing.confirm": {
+        "id": "routes/app.billing.confirm",
+        "parentId": "routes/app",
+        "file": "app/routes/app.billing.confirm.jsx",
+        "path": "billing/confirm",
+        "config": {
+          "runtime": "nodejs"
+        }
       },
       "routes/app.additional": {
         "id": "routes/app.additional",
@@ -180,6 +190,12 @@
         "file": "routes/app.jsx",
         "path": "app"
       },
+      "routes/app.billing.confirm": {
+        "id": "routes/app.billing.confirm",
+        "parentId": "routes/app",
+        "file": "routes/app.billing.confirm.jsx",
+        "path": "billing/confirm"
+      },
       "routes/app.additional": {
         "id": "routes/app.additional",
         "parentId": "routes/app",
@@ -256,6 +272,11 @@
             "file": "routes/app.jsx",
             "path": "app",
             "children": [
+              {
+                "id": "routes/app.billing.confirm",
+                "file": "routes/app.billing.confirm.jsx",
+                "path": "billing/confirm"
+              },
               {
                 "id": "routes/app.additional",
                 "file": "routes/app.additional.jsx",
