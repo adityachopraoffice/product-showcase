@@ -27,3 +27,18 @@ The Shopify configuration in `app/shopify.server.js` was using `AppDistribution.
   ```
 
 ---
+
+## [2026-05-27] Fix Billing Confirm 404 Error
+
+### Problem
+After approving payment on Shopify's billing page, it redirected to a preview Vercel deployment URL (`product-showcase-l1lg1a2ci-aditya-chopra-s-projects.vercel.app/billing/confirm`) instead of the production URL, causing a 404.
+
+### Cause
+`SHOPIFY_APP_URL` environment variable in Vercel was set to a preview deployment URL instead of the production URL.
+
+### Solution
+Updated `SHOPIFY_APP_URL` in Vercel Environment Variables to:
+`https://product-showcase-ten-blond.vercel.app`
+
+### Changed Files
+- No code changes — only Vercel environment variable update.

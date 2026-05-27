@@ -33,3 +33,16 @@ model ShopPlan {
   plan      String   @default("free")
   updatedAt DateTime @updatedAt
 }
+
+model Showcase {
+  id         String   @id @default(cuid())
+  shop       String
+  name       String
+  templateId String
+  status     String   @default("draft")
+  settings   String   @default("{}")
+  views      Int      @default(0)
+  orders     Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
