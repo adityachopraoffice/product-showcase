@@ -2,12 +2,15 @@ import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { useLoaderData, Link } from "react-router";
 import { TEMPLATES } from "../data/templates";
+import db from "../db.server";
 
 export const loader = async ({ request }) => {
-  await authenticate.admin(request);
-  return { templates: TEMPLATES, userPlan: "free" };
+  const { session } = await authenticate.admin(request);
+  const shopPlan = await db.shopPlan.findUnique({
+    where: { shop: session.shop },
+  });
+  return { templates: TEMPLATES, userPlan: shopPlan?.plan || "free" };
 };
-
 export default function ShowcaseGallery() {
   const { templates, userPlan } = useLoaderData();
   const freeTemplates = templates.filter((t) => t.tier === "free");
