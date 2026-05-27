@@ -19,6 +19,5 @@ scopes = "write_metaobject_definitions,write_metaobjects,write_products"
 redirect_urls = [
   "https://product-showcase-ten-blond.vercel.app/auth/callback",
   "https://product-showcase-ten-blond.vercel.app/auth/shopify/callback",
-  "https://product-showcase-ten-blond.vercel.app/api/auth/callback",
-  "https://product-showcase-ten-blond.vercel.app/app/billing/confirm"
+  "https://product-showcase-ten-blond.vercel.app/api/auth/callback"
 ]

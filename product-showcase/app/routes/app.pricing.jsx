@@ -7,11 +7,6 @@ import db from "../db.server";
 
 const validPlan = (plan) => ["free", "starter", "pro", "enterprise"].includes(plan) ? plan : "free";
 
-const PLAN_NAMES = {
-  starter: "Product Showcase Starter",
-  pro: "Product Showcase Pro",
-};
-
 export const loader = async ({ request }) => {
   const { session } = await authenticate.admin(request);
   const shopPlan = await db.shopPlan.findUnique({
@@ -21,7 +16,7 @@ export const loader = async ({ request }) => {
 };
 
 export const action = async ({ request }) => {
-  const { session, billing } = await authenticate.admin(request);
+  const { session, admin } = await authenticate.admin(request);
   const formData = await request.formData();
   const plan = validPlan(formData.get("plan"));
 
@@ -34,25 +29,11 @@ export const action = async ({ request }) => {
     return { success: true, plan };
   }
 
-  const planName = PLAN_NAMES[plan];
+  const returnUrl = `${process.env.SHOPIFY_APP_URL}/app/billing/confirm?plan=${plan}&shop=${session.shop}`;
+  const { createBillingCharge } = await import("../billing.server");
+  const confirmationUrl = await createBillingCharge(admin, plan, returnUrl);
 
-  await billing.require({
-    plans: [planName],
-    isTest: true,
-    onFailure: async () => billing.request({
-      plan: planName,
-      isTest: true,
-      returnUrl: `${process.env.SHOPIFY_APP_URL}/app/billing/confirm?plan=${plan}`,
-    }),
-  });
-
-  await db.shopPlan.upsert({
-    where: { shop: session.shop },
-    update: { plan },
-    create: { shop: session.shop, plan },
-  });
-
-  return { success: true, plan };
+  return { confirmationUrl };
 };
 
 export default function Pricing() {
@@ -61,16 +42,25 @@ export default function Pricing() {
   const submit = useSubmit();
   const navigate = useNavigate();
   const [currentPlan, setCurrentPlan] = useState(initialPlan);
-
   useEffect(() => {
+    if (actionData?.confirmationUrl) {
+      window.open(actionData.confirmationUrl, "_top");
+    }
     if (actionData?.success) {
       setCurrentPlan(actionData.plan);
       window.shopify?.toast.show(`Switched to ${actionData.plan.toUpperCase()} plan!`);
       setTimeout(() => navigate("/app"), 1500);
     }
   }, [actionData]);
-
   const handleUpgrade = (planId) => {
+    if (planId === "free") {
+      setCurrentPlan(planId);
+      const formData = new FormData();
+      formData.append("plan", planId);
+      submit(formData, { method: "post" });
+      setTimeout(() => navigate("/app"), 1500);
+      return;
+    }
     const formData = new FormData();
     formData.append("plan", planId);
     submit(formData, { method: "post" });
