@@ -863,75 +863,73 @@ export function TemplatePreview({ id, accent, locked, tier }) {
             </button>
 
             {/* Carousel Tracks */}
+            {/* Carousel Tracks */}
             <div style={{
               flex: 1, display: "flex", gap: "20px", overflow: "hidden",
               padding: "16px 4px", alignItems: "center",
             }}>
-              {products.map((p, i) => {
-                const isSpotlight = i === carouselIndex;
-                return (
-                  <div
-                    key={i}
-                    style={{
-                      minWidth: isSpotlight ? "42%" : "23%",
-                      background: "#fff", borderRadius: "16px", overflow: "hidden",
-                      border: isSpotlight ? `2.5px solid ${accent}` : "1px solid #e1e3e5",
-                      boxShadow: isSpotlight
-                        ? `0 12px 30px ${accent}25`
-                        : "0 2px 8px rgba(0,0,0,0.04)",
-                      transform: isSpotlight ? "scale(1.04)" : "scale(0.92)",
-                      opacity: isSpotlight ? 1 : 0.65,
-                      transition: "all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1)",
-                      flexShrink: 0,
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setCarouselIndex(i)}
-                  >
-                    {/* Thumbnail SVG */}
-                    <div style={{
-                      height: isSpotlight ? "140px" : "90px",
-                      background: `linear-gradient(135deg, ${p.color}20, ${p.color}05)`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      transition: "height 0.35s",
-                    }}>
-                      <ProductSvg type={p.type} size={isSpotlight ? 84 : 54} />
-                    </div>
-
-                    {/* Meta */}
-                    <div style={{ padding: isSpotlight ? "16px" : "10px" }}>
+              {(() => {
+                const start = Math.max(0, Math.min(carouselIndex - 1, products.length - 3));
+                const visible = products.slice(start, start + 3);
+                return visible.map((p, i) => {
+                  const actualIndex = start + i;
+                  const isSpotlight = actualIndex === carouselIndex;
+                  return (
+                    <div
+                      key={actualIndex}
+                      style={{
+                        flex: isSpotlight ? "0 0 44%" : "0 0 24%",
+                        background: "#fff", borderRadius: "16px", overflow: "hidden",
+                        border: isSpotlight ? `2.5px solid ${accent}` : "1px solid #e1e3e5",
+                        boxShadow: isSpotlight ? `0 12px 30px ${accent}25` : "0 2px 8px rgba(0,0,0,0.04)",
+                        transform: isSpotlight ? "scale(1.04)" : "scale(0.92)",
+                        opacity: isSpotlight ? 1 : 0.65,
+                        transition: "all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1)",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => setCarouselIndex(actualIndex)}
+                    >
                       <div style={{
-                        fontWeight: 800, color: "#1a1c1e",
-                        fontSize: isSpotlight ? "14px" : "12px",
-                        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                        height: isSpotlight ? "140px" : "90px",
+                        background: `linear-gradient(135deg, ${p.color}20, ${p.color}05)`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        transition: "height 0.35s",
                       }}>
-                        {p.name}
+                        <ProductSvg type={p.type} size={isSpotlight ? 84 : 54} />
                       </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
-                        <span style={{ fontWeight: 800, color: accent, fontSize: isSpotlight ? "15px" : "13px" }}>{p.price}</span>
-                        {isSpotlight && <StarRating rating={p.rating} />}
+                      <div style={{ padding: isSpotlight ? "16px" : "10px" }}>
+                        <div style={{
+                          fontWeight: 800, color: "#1a1c1e",
+                          fontSize: isSpotlight ? "14px" : "12px",
+                          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                        }}>
+                          {p.name}
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
+                          <span style={{ fontWeight: 800, color: accent, fontSize: isSpotlight ? "15px" : "13px" }}>{p.price}</span>
+                          {isSpotlight && <StarRating rating={p.rating} />}
+                        </div>
+                        {isSpotlight && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddToCart(p.name, actualIndex);
+                            }}
+                            style={{
+                              width: "100%", marginTop: "12px", background: cartState[actualIndex] ? "#10b981" : accent,
+                              color: "#fff", border: "none", borderRadius: "8px",
+                              padding: "8px", fontWeight: 700, fontSize: "11px",
+                              cursor: "pointer", boxShadow: "0 3px 6px rgba(0,0,0,0.1)",
+                            }}
+                          >
+                            {cartState[actualIndex] ? "✓ Added!" : "Add to Cart"}
+                          </button>
+                        )}
                       </div>
-
-                      {/* CTA inside active slide */}
-                      {isSpotlight && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddToCart(p.name, i);
-                          }}
-                          style={{
-                            width: "100%", marginTop: "12px", background: cartState[i] ? "#10b981" : accent,
-                            color: "#fff", border: "none", borderRadius: "8px",
-                            padding: "8px", fontWeight: 700, fontSize: "11px",
-                            cursor: "pointer", boxShadow: "0 3px 6px rgba(0,0,0,0.1)",
-                          }}
-                        >
-                          {cartState[i] ? "✓ Added!" : "Add to Cart"}
-                        </button>
-                      )}
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                });
+              })()}
             </div>
 
             {/* Right Button */}
