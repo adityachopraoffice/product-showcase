@@ -83,3 +83,24 @@ Updated `SHOPIFY_APP_URL` in Vercel Environment Variables to:
 - `prisma/schema.prisma`
 - `prisma/schema.postgres.prisma`
 - `app/routes/app.jsx`
+
+## [2026-05-28] Theme Extension + All Features Complete
+
+### Theme Extension
+- Created showcase.liquid block with Grid, List, Hero, Masonry, Carousel layouts
+- Created showcase.css with responsive styles and fixed card alignment
+- Layout selector changed to dropdown with Pro options labeled
+- Widget appears in Shopify Theme Editor under Apps > Product Showcase
+
+### Summary of All Completed Features
+1. ✅ Shopify embedded app on Vercel + Neon Postgres
+2. ✅ Landing page with Product Showcase branding
+3. ✅ Auth/login page
+4. ✅ Plan persistence in database (free/starter/pro)
+5. ✅ Shopify Billing API with real payments + 7-day trial
+6. ✅ Templates unlock based on plan
+7. ✅ Showcase Gallery with tier locking
+8. ✅ Home dashboard with templates, manage, customization tabs
+9. ✅ Real Showcase CRUD (create, activate, delete)
+10. ✅ Onboarding flow (3-step, one-time)
+11. ✅ Theme extension widget for storefront
