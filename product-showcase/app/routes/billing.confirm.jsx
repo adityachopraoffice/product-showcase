@@ -23,7 +23,7 @@ export const loader = async ({ request }) => {
     const { savePlanToMetafield } = await import("../plan.server");
     await savePlanToMetafield(admin, plan);
   } catch (e) {
-    console.log("Metafield save failed:", e.message);
+    console.log("Could not save metafield:", e.message);
   }
 
   return redirect("/app");
