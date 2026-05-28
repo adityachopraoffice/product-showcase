@@ -1,0 +1,38 @@
+.ps-showcase { font-family: inherit; padding: 20px 0; }
+.ps-showcase__title { font-size: 1.8rem; font-weight: 700; margin-bottom: 24px; text-align: center; }
+
+/* Grid */
+.ps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+.ps-grid__item { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e1e3e5; transition: transform 0.2s, box-shadow 0.2s; }
+.ps-grid__item:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.ps-grid__image img { width: 100%; height: 200px; object-fit: cover; }
+.ps-grid__info { padding: 12px; }
+.ps-grid__title { font-size: 0.95rem; font-weight: 600; margin: 0 0 6px; color: #202223; }
+.ps-grid__price { font-size: 1rem; font-weight: 700; color: var(--ps-accent, #5cb85c); margin: 0; }
+
+/* List */
+.ps-list { display: flex; flex-direction: column; gap: 12px; }
+.ps-list__item { display: flex; align-items: center; gap: 16px; padding: 16px; background: #fff; border-radius: 12px; border: 1px solid #e1e3e5; }
+.ps-list__image { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+.ps-list__info { flex: 1; }
+.ps-list__title { font-size: 1rem; font-weight: 600; color: #202223; margin: 0 0 4px; }
+.ps-list__price { font-size: 0.95rem; font-weight: 700; color: var(--ps-accent, #5cb85c); margin: 0; }
+
+/* Hero */
+.ps-hero__main { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; margin-bottom: 24px; }
+.ps-hero__image { width: 100%; border-radius: 16px; object-fit: cover; max-height: 400px; }
+.ps-hero__title { font-size: 1.8rem; font-weight: 700; margin: 0 0 12px; }
+.ps-hero__desc { color: #6d7175; margin: 0 0 16px; line-height: 1.6; }
+.ps-hero__price { font-size: 1.4rem; font-weight: 800; color: var(--ps-accent, #5cb85c); margin: 0 0 20px; }
+.ps-hero__related { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+
+/* Button */
+.ps-btn { width: 100%; padding: 10px; background: var(--ps-accent, #5cb85c); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: opacity 0.2s; }
+.ps-btn:hover { opacity: 0.9; }
+.ps-btn--sm { width: auto; padding: 8px 16px; }
+.ps-btn--lg { padding: 14px 28px; font-size: 1rem; }
+
+@media (max-width: 768px) {
+  .ps-hero__main { grid-template-columns: 1fr; }
+  .ps-grid { grid-template-columns: repeat(2, 1fr); }
+}

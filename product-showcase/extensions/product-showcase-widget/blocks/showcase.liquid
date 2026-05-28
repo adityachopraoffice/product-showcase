@@ -1,0 +1,149 @@
+{{ 'showcase.css' | asset_url | stylesheet_tag }}
+
+<div class="ps-showcase" id="ps-showcase-{{ block.id }}">
+  {% if block.settings.title != blank %}
+    <h2 class="ps-showcase__title">{{ block.settings.title }}</h2>
+  {% endif %}
+
+  {% assign layout = block.settings.layout %}
+  {% assign products = block.settings.collection.products %}
+  {% assign max_products = block.settings.max_products %}
+  {% assign accent_color = block.settings.accent_color %}
+
+  {% if layout == "grid" %}
+    <div class="ps-grid" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-grid__item">
+          <a href="{{ product.url }}">
+            <div class="ps-grid__image">
+              {% if product.featured_image %}
+                <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
+              {% endif %}
+            </div>
+            <div class="ps-grid__info">
+              <h3 class="ps-grid__title">{{ product.title }}</h3>
+              <p class="ps-grid__price">{{ product.price | money }}</p>
+            </div>
+          </a>
+          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">
+            Add to Cart
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% elsif layout == "list" %}
+    <div class="ps-list" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-list__item">
+          {% if product.featured_image %}
+            <img src="{{ product.featured_image | image_url: width: 100 }}" alt="{{ product.title }}" loading="lazy" class="ps-list__image" />
+          {% endif %}
+          <div class="ps-list__info">
+            <a href="{{ product.url }}"><h3 class="ps-list__title">{{ product.title }}</h3></a>
+            <p class="ps-list__price">{{ product.price | money }}</p>
+          </div>
+          <button class="ps-btn ps-btn--sm" onclick="addToCart('{{ product.variants.first.id }}')">
+            Add to Cart
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% elsif layout == "hero" %}
+    <div class="ps-hero" style="--ps-accent: {{ accent_color }};">
+      {% assign hero_product = products.first %}
+      {% if hero_product %}
+        <div class="ps-hero__main">
+          {% if hero_product.featured_image %}
+            <img src="{{ hero_product.featured_image | image_url: width: 800 }}" alt="{{ hero_product.title }}" loading="lazy" class="ps-hero__image" />
+          {% endif %}
+          <div class="ps-hero__content">
+            <h2 class="ps-hero__title">{{ hero_product.title }}</h2>
+            <p class="ps-hero__desc">{{ hero_product.description | strip_html | truncate: 150 }}</p>
+            <p class="ps-hero__price">{{ hero_product.price | money }}</p>
+            <button class="ps-btn ps-btn--lg" onclick="addToCart('{{ hero_product.variants.first.id }}')">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+        {% if products.size > 1 %}
+          <div class="ps-hero__related">
+            {% for product in products limit: max_products offset: 1 %}
+              <div class="ps-grid__item">
+                <a href="{{ product.url }}">
+                  {% if product.featured_image %}
+                    <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title }}" loading="lazy" />
+                  {% endif %}
+                  <p class="ps-grid__title">{{ product.title }}</p>
+                  <p class="ps-grid__price">{{ product.price | money }}</p>
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<script>
+function addToCart(variantId) {
+  fetch('/cart/add.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: variantId, quantity: 1 })
+  })
+  .then(res => res.json())
+  .then(() => {
+    window.location.href = '/cart';
+  })
+  .catch(err => console.error('Error adding to cart:', err));
+}
+</script>
+
+{% schema %}
+{
+  "name": "Product Showcase",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Featured Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout Style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "list", "label": "List" },
+        { "value": "hero", "label": "Hero" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Max Products",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#5cb85c"
+    }
+  ]
+}
+{% endschema %}
