@@ -1,5 +1,5 @@
-import { redirect } from "react-router";
-import { Outlet, useLoaderData, useRouteError } from "react-router";
+import { Outlet, useLoaderData, useRouteError, useNavigate } from "react-router";
+import { useEffect } from "react";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { AppProvider } from "@shopify/shopify-app-react-router/react";
 import { authenticate } from "../shopify.server";
@@ -10,14 +10,21 @@ export const loader = async ({ request }) => {
   const shopPlan = await db.shopPlan.findUnique({
     where: { shop: session.shop },
   });
-  if (!shopPlan?.onboarded) {
-    throw redirect("/app/onboarding");
-  }
-  return { apiKey: process.env.SHOPIFY_API_KEY || "" };
+  return {
+    apiKey: process.env.SHOPIFY_API_KEY || "",
+    onboarded: shopPlan?.onboarded ?? false,
+  };
 };
 
 export default function App() {
-  const { apiKey } = useLoaderData();
+  const { apiKey, onboarded } = useLoaderData();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!onboarded) {
+      navigate("/app/onboarding");
+    }
+  }, [onboarded]);
 
   return (
     <AppProvider embedded apiKey={apiKey}>
