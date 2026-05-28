@@ -61,3 +61,25 @@ Updated `SHOPIFY_APP_URL` in Vercel Environment Variables to:
 - `prisma/schema.prisma`
 - `prisma/schema.postgres.prisma`
 - `app/routes/app._index.jsx`
+
+
+## [2026-05-28] Add Onboarding Flow
+
+### What was done
+- Added `onboarded` boolean field to `ShopPlan` model in both schema files
+- Ran migration `20260528041546_add_onboarding` on Neon Postgres
+- Created `app/routes/app.onboarding.jsx` with 3-step onboarding flow:
+  - Step 1: Welcome screen
+  - Step 2: Pick a free template
+  - Step 3: Name your showcase
+- On completion, sets `onboarded = true` and creates first showcase
+- Updated `app/routes/app.jsx` to check onboarding status and redirect if not onboarded
+- Onboarding only shows once per shop
+
+### New Files
+- `app/routes/app.onboarding.jsx`
+
+### Changed Files
+- `prisma/schema.prisma`
+- `prisma/schema.postgres.prisma`
+- `app/routes/app.jsx`
