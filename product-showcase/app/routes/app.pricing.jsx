@@ -42,6 +42,7 @@ export default function Pricing() {
   const submit = useSubmit();
   const navigate = useNavigate();
   const [currentPlan, setCurrentPlan] = useState(initialPlan);
+
   useEffect(() => {
     if (actionData?.confirmationUrl) {
       window.open(actionData.confirmationUrl, "_top");
@@ -52,6 +53,7 @@ export default function Pricing() {
       setTimeout(() => navigate("/app"), 1500);
     }
   }, [actionData]);
+
   const handleUpgrade = (planId) => {
     if (planId === "free") {
       setCurrentPlan(planId);
@@ -90,11 +92,14 @@ export default function Pricing() {
                   ...cardStyle,
                   border: plan.highlighted ? `2px solid ${plan.color}` : "1px solid #e1e3e5",
                   boxShadow: plan.highlighted ? `0 8px 24px ${plan.color}25` : "0 2px 8px rgba(0,0,0,0.06)",
+                  // ✅ FIX 1: add paddingTop on the card itself to make room for the badge
+                  paddingTop: plan.highlighted ? "20px" : "0px",
                 }}
               >
                 {plan.highlighted && (
                   <div style={{ ...popularBadgeStyle, background: plan.color }}>Most Popular</div>
                 )}
+                {/* ✅ FIX 2: removed conditional paddingTop here since card handles it */}
                 <div style={{ padding: "32px 24px", textAlign: "center" }}>
                   <h3 style={{ fontSize: "20px", fontWeight: 700, color: "#202223", margin: "0 0 8px" }}>
                     {plan.name}
@@ -160,9 +165,13 @@ export default function Pricing() {
   );
 }
 
+// ✅ FIX 3: removed overflow: "hidden" — it was clipping the absolutely-positioned badge
+const cardStyle = { background: "#fff", borderRadius: "12px", position: "relative" };
+
+// ✅ FIX 4: top: "-14px" + translateX only — badge floats cleanly above the card edge
+const popularBadgeStyle = { position: "absolute", top: "-14px", left: "50%", transform: "translateX(-50%)", color: "#fff", fontSize: "11px", fontWeight: 700, padding: "4px 16px", borderRadius: "20px", textTransform: "uppercase", whiteSpace: "nowrap" };
+
 const gridStyle = { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px", margin: "0 0 40px" };
-const cardStyle = { background: "#fff", borderRadius: "12px", overflow: "hidden", position: "relative" };
-const popularBadgeStyle = { position: "absolute", top: 0, left: "50%", transform: "translate(-50%, -50%)", color: "#fff", fontSize: "11px", fontWeight: 700, padding: "4px 16px", borderRadius: "20px", textTransform: "uppercase" };
 const btnStyle = { display: "block", width: "100%", textAlign: "center", padding: "12px 16px", borderRadius: "6px", fontSize: "14px", fontWeight: 600, border: "none", boxSizing: "border-box" };
 const faqStyle = { background: "#fff", borderRadius: "8px", padding: "16px 20px", border: "1px solid #e1e3e5" };
 
