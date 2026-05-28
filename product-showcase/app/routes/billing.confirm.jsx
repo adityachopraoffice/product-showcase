@@ -1,5 +1,6 @@
 import { redirect } from "react-router";
 import db from "../db.server";
+import shopify from "../shopify.server";
 
 export const loader = async ({ request }) => {
   const url = new URL(request.url);
@@ -8,7 +9,7 @@ export const loader = async ({ request }) => {
   const shop = url.searchParams.get("shop");
 
   if (!chargeId || !plan || !shop) {
-    return redirect(`https://${shop}/admin/apps`);
+    return redirect("/app/pricing");
   }
 
   await db.shopPlan.upsert({
@@ -17,6 +18,13 @@ export const loader = async ({ request }) => {
     create: { shop, plan },
   });
 
-  // Redirect back into Shopify admin embedded app
-  return redirect(`https://${shop}/admin/apps/product-showcase-14`);
+  try {
+    const { admin } = await shopify.authenticate.admin(request);
+    const { savePlanToMetafield } = await import("../plan.server");
+    await savePlanToMetafield(admin, plan);
+  } catch (e) {
+    console.log("Could not save metafield:", e.message);
+  }
+
+  return redirect("/app");
 };

@@ -9,8 +9,19 @@
   {% assign products = block.settings.collection.products %}
   {% assign max_products = block.settings.max_products %}
   {% assign accent_color = block.settings.accent_color %}
+  {% assign shop_plan = shop.metafields.product_showcase.plan.value | default: "free" %}
 
-  {% if layout == "grid" %}
+  {% if layout == "masonry" and shop_plan != "pro" %}
+    <div style="padding:20px;text-align:center;background:#f9f0ff;border-radius:12px;border:2px dashed #9C6ADE;">
+      <p style="color:#9C6ADE;font-weight:600;margin:0;">Masonry Gallery requires Pro plan. Upgrade in Product Showcase app.</p>
+    </div>
+
+  {% elsif layout == "carousel" and shop_plan == "free" %}
+    <div style="padding:20px;text-align:center;background:#e8f9fb;border-radius:12px;border:2px dashed #00BCD4;">
+      <p style="color:#00BCD4;font-weight:600;margin:0;">Carousel requires Starter or Pro plan. Upgrade in Product Showcase app.</p>
+    </div>
+
+  {% elsif layout == "grid" %}
     <div class="ps-grid" style="--ps-accent: {{ accent_color }};">
       {% for product in products limit: max_products %}
         <div class="ps-grid__item">
@@ -26,6 +37,25 @@
             </div>
           </a>
           <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% elsif layout == "modern-showcase" %}
+    <div class="ps-modern" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-modern__item">
+          <div class="ps-modern__image">
+            {% if product.featured_image %}
+              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
+            {% endif %}
+          </div>
+          <div class="ps-modern__info">
+            <h3 class="ps-modern__title">{{ product.title }}</h3>
+            <p class="ps-modern__desc">{{ product.description | strip_html | truncate: 100 }}</p>
+            <p class="ps-modern__price">{{ product.price | money }}</p>
+            <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
+          </div>
         </div>
       {% endfor %}
     </div>
@@ -117,25 +147,6 @@
       <button class="ps-carousel__btn ps-carousel__btn--next" onclick="moveCarousel('{{ block.id }}', 1)">&#8250;</button>
     </div>
 
-  {% elsif layout == "modern-showcase" %}
-    <div class="ps-modern" style="--ps-accent: {{ accent_color }};">
-      {% for product in products limit: max_products %}
-        <div class="ps-modern__item">
-          <div class="ps-modern__image">
-            {% if product.featured_image %}
-              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
-            {% endif %}
-          </div>
-          <div class="ps-modern__info">
-            <h3 class="ps-modern__title">{{ product.title }}</h3>
-            <p class="ps-modern__desc">{{ product.description | strip_html | truncate: 100 }}</p>
-            <p class="ps-modern__price">{{ product.price | money }}</p>
-            <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-
   {% endif %}
 </div>
 
@@ -185,7 +196,7 @@ function moveCarousel(blockId, direction) {
         { "value": "list", "label": "Compact List" },
         { "value": "hero", "label": "Bold Hero" },
         { "value": "masonry", "label": "Masonry Gallery (Pro)" },
-        { "value": "carousel", "label": "Carousel Spotlight (Pro)" }
+        { "value": "carousel", "label": "Carousel Spotlight (Starter+)" }
       ],
       "default": "grid"
     },
