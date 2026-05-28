@@ -1,11 +1,18 @@
+import { redirect } from "react-router";
 import { Outlet, useLoaderData, useRouteError } from "react-router";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { AppProvider } from "@shopify/shopify-app-react-router/react";
 import { authenticate } from "../shopify.server";
+import db from "../db.server";
 
 export const loader = async ({ request }) => {
-  await authenticate.admin(request);
-  // eslint-disable-next-line no-undef
+  const { session } = await authenticate.admin(request);
+  const shopPlan = await db.shopPlan.findUnique({
+    where: { shop: session.shop },
+  });
+  if (!shopPlan?.onboarded) {
+    throw redirect("/app/onboarding");
+  }
   return { apiKey: process.env.SHOPIFY_API_KEY || "" };
 };
 

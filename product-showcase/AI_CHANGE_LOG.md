@@ -42,3 +42,22 @@ Updated `SHOPIFY_APP_URL` in Vercel Environment Variables to:
 
 ### Changed Files
 - No code changes — only Vercel environment variable update.
+
+
+## [2026-05-28] Add Real Showcase CRUD
+
+### What was done
+- Added `Showcase` model to both `prisma/schema.prisma` and `prisma/schema.postgres.prisma`
+- Ran migration `20260527104354_add_showcase` on Neon Postgres
+- Created `app/routes/app.showcases.jsx` with create, update, delete, toggleStatus actions
+- Updated `app/routes/app._index.jsx` loader to fetch real showcases from DB
+- Replaced mock data in Manage tab with real CRUD UI
+- Added empty state when no showcases exist
+
+### New Files
+- `app/routes/app.showcases.jsx`
+
+### Changed Files
+- `prisma/schema.prisma`
+- `prisma/schema.postgres.prisma`
+- `app/routes/app._index.jsx`
