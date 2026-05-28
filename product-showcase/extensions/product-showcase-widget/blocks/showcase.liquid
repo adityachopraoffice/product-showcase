@@ -12,33 +12,27 @@
   {% assign shop_plan = shop.metafields.product_showcase.plan.value | default: "free" %}
 
   {% if layout == "masonry" and shop_plan != "pro" %}
-    <div style="padding:20px;text-align:center;background:#f9f0ff;border-radius:12px;border:2px dashed #9C6ADE;">
-      <p style="color:#9C6ADE;font-weight:600;margin:0;">Masonry Gallery requires Pro plan. Upgrade in Product Showcase app.</p>
+    <div style="padding:24px;text-align:center;background:#f9f0ff;border-radius:12px;border:2px dashed #9C6ADE;">
+      <p style="color:#9C6ADE;font-size:1rem;font-weight:600;margin:0 0 8px;">Masonry Gallery requires Pro plan</p>
+      <p style="color:#6d7175;font-size:0.9rem;margin:0;">Upgrade in your Product Showcase app.</p>
+    </div>
+
+  {% elsif layout == "compact-list" and shop_plan != "pro" %}
+    <div style="padding:24px;text-align:center;background:#f9f0ff;border-radius:12px;border:2px dashed #9C6ADE;">
+      <p style="color:#9C6ADE;font-size:1rem;font-weight:600;margin:0 0 8px;">Compact List requires Pro plan</p>
+      <p style="color:#6d7175;font-size:0.9rem;margin:0;">Upgrade in your Product Showcase app.</p>
+    </div>
+
+  {% elsif layout == "bold-hero" and shop_plan == "free" %}
+    <div style="padding:24px;text-align:center;background:#e8f9fb;border-radius:12px;border:2px dashed #00BCD4;">
+      <p style="color:#00BCD4;font-size:1rem;font-weight:600;margin:0 0 8px;">Bold Hero requires Starter or Pro plan</p>
+      <p style="color:#6d7175;font-size:0.9rem;margin:0;">Upgrade in your Product Showcase app.</p>
     </div>
 
   {% elsif layout == "carousel" and shop_plan == "free" %}
-    <div style="padding:20px;text-align:center;background:#e8f9fb;border-radius:12px;border:2px dashed #00BCD4;">
-      <p style="color:#00BCD4;font-weight:600;margin:0;">Carousel requires Starter or Pro plan. Upgrade in Product Showcase app.</p>
-    </div>
-
-  {% elsif layout == "grid" %}
-    <div class="ps-grid" style="--ps-accent: {{ accent_color }};">
-      {% for product in products limit: max_products %}
-        <div class="ps-grid__item">
-          <a href="{{ product.url }}">
-            <div class="ps-grid__image">
-              {% if product.featured_image %}
-                <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
-              {% endif %}
-            </div>
-            <div class="ps-grid__info">
-              <h3 class="ps-grid__title">{{ product.title }}</h3>
-              <p class="ps-grid__price">{{ product.price | money }}</p>
-            </div>
-          </a>
-          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
-        </div>
-      {% endfor %}
+    <div style="padding:24px;text-align:center;background:#e8f9fb;border-radius:12px;border:2px dashed #00BCD4;">
+      <p style="color:#00BCD4;font-size:1rem;font-weight:600;margin:0 0 8px;">Carousel Spotlight requires Starter or Pro plan</p>
+      <p style="color:#6d7175;font-size:0.9rem;margin:0;">Upgrade in your Product Showcase app.</p>
     </div>
 
   {% elsif layout == "modern-showcase" %}
@@ -60,23 +54,27 @@
       {% endfor %}
     </div>
 
-  {% elsif layout == "list" %}
-    <div class="ps-list" style="--ps-accent: {{ accent_color }};">
+  {% elsif layout == "minimal-grid" %}
+    <div class="ps-minimal-grid" style="--ps-accent: {{ accent_color }};">
       {% for product in products limit: max_products %}
-        <div class="ps-list__item">
-          {% if product.featured_image %}
-            <img src="{{ product.featured_image | image_url: width: 100 }}" alt="{{ product.title }}" loading="lazy" class="ps-list__image" />
-          {% endif %}
-          <div class="ps-list__info">
-            <a href="{{ product.url }}"><h3 class="ps-list__title">{{ product.title }}</h3></a>
-            <p class="ps-list__price">{{ product.price | money }}</p>
-          </div>
-          <button class="ps-btn ps-btn--sm" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
+        <div class="ps-minimal-grid__item">
+          <a href="{{ product.url }}">
+            <div class="ps-grid__image">
+              {% if product.featured_image %}
+                <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
+              {% endif %}
+            </div>
+            <div class="ps-grid__info">
+              <h3 class="ps-grid__title">{{ product.title }}</h3>
+              <p class="ps-grid__price">{{ product.price | money }}</p>
+            </div>
+          </a>
+          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
         </div>
       {% endfor %}
     </div>
 
-  {% elsif layout == "hero" %}
+  {% elsif layout == "bold-hero" %}
     <div class="ps-hero" style="--ps-accent: {{ accent_color }};">
       {% assign hero_product = products.first %}
       {% if hero_product %}
@@ -109,24 +107,6 @@
       {% endif %}
     </div>
 
-  {% elsif layout == "masonry" %}
-    <div class="ps-masonry" style="--ps-accent: {{ accent_color }};">
-      {% for product in products limit: max_products %}
-        <div class="ps-masonry__item">
-          <a href="{{ product.url }}">
-            {% if product.featured_image %}
-              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
-            {% endif %}
-            <div class="ps-masonry__overlay">
-              <h3 class="ps-masonry__title">{{ product.title }}</h3>
-              <p class="ps-masonry__price">{{ product.price | money }}</p>
-            </div>
-          </a>
-          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
-        </div>
-      {% endfor %}
-    </div>
-
   {% elsif layout == "carousel" %}
     <div class="ps-carousel" style="--ps-accent: {{ accent_color }};" id="carousel-{{ block.id }}">
       <button class="ps-carousel__btn ps-carousel__btn--prev" onclick="moveCarousel('{{ block.id }}', -1)">&#8249;</button>
@@ -145,6 +125,40 @@
         {% endfor %}
       </div>
       <button class="ps-carousel__btn ps-carousel__btn--next" onclick="moveCarousel('{{ block.id }}', 1)">&#8250;</button>
+    </div>
+
+  {% elsif layout == "masonry" %}
+    <div class="ps-masonry" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-masonry__item">
+          <a href="{{ product.url }}">
+            {% if product.featured_image %}
+              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
+            {% endif %}
+            <div class="ps-masonry__overlay">
+              <h3 class="ps-masonry__title">{{ product.title }}</h3>
+              <p class="ps-masonry__price">{{ product.price | money }}</p>
+            </div>
+          </a>
+          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% elsif layout == "compact-list" %}
+    <div class="ps-list" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-list__item">
+          {% if product.featured_image %}
+            <img src="{{ product.featured_image | image_url: width: 100 }}" alt="{{ product.title }}" loading="lazy" class="ps-list__image" />
+          {% endif %}
+          <div class="ps-list__info">
+            <a href="{{ product.url }}"><h3 class="ps-list__title">{{ product.title }}</h3></a>
+            <p class="ps-list__price">{{ product.price | money }}</p>
+          </div>
+          <button class="ps-btn ps-btn--sm" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
+        </div>
+      {% endfor %}
     </div>
 
   {% endif %}
@@ -191,14 +205,14 @@ function moveCarousel(blockId, direction) {
       "id": "layout",
       "label": "Layout Style",
       "options": [
-        { "value": "grid", "label": "Grid Layout" },
-        { "value": "modern-showcase", "label": "Modern Showcase" },
-        { "value": "list", "label": "Compact List" },
-        { "value": "hero", "label": "Bold Hero" },
+        { "value": "modern-showcase", "label": "Modern Showcase (Free)" },
+        { "value": "minimal-grid", "label": "Minimal Grid (Free)" },
+        { "value": "bold-hero", "label": "Bold Hero (Starter+)" },
+        { "value": "carousel", "label": "Carousel Spotlight (Starter+)" },
         { "value": "masonry", "label": "Masonry Gallery (Pro)" },
-        { "value": "carousel", "label": "Carousel Spotlight (Starter+)" }
+        { "value": "compact-list", "label": "Compact List (Pro)" }
       ],
-      "default": "grid"
+      "default": "modern-showcase"
     },
     {
       "type": "range",
