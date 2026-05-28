@@ -25,9 +25,7 @@
               <p class="ps-grid__price">{{ product.price | money }}</p>
             </div>
           </a>
-          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">
-            Add to Cart
-          </button>
+          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
         </div>
       {% endfor %}
     </div>
@@ -43,9 +41,7 @@
             <a href="{{ product.url }}"><h3 class="ps-list__title">{{ product.title }}</h3></a>
             <p class="ps-list__price">{{ product.price | money }}</p>
           </div>
-          <button class="ps-btn ps-btn--sm" onclick="addToCart('{{ product.variants.first.id }}')">
-            Add to Cart
-          </button>
+          <button class="ps-btn ps-btn--sm" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
         </div>
       {% endfor %}
     </div>
@@ -62,9 +58,7 @@
             <h2 class="ps-hero__title">{{ hero_product.title }}</h2>
             <p class="ps-hero__desc">{{ hero_product.description | strip_html | truncate: 150 }}</p>
             <p class="ps-hero__price">{{ hero_product.price | money }}</p>
-            <button class="ps-btn ps-btn--lg" onclick="addToCart('{{ hero_product.variants.first.id }}')">
-              Add to Cart
-            </button>
+            <button class="ps-btn ps-btn--lg" onclick="addToCart('{{ hero_product.variants.first.id }}')">Add to Cart</button>
           </div>
         </div>
         {% if products.size > 1 %}
@@ -84,6 +78,64 @@
         {% endif %}
       {% endif %}
     </div>
+
+  {% elsif layout == "masonry" %}
+    <div class="ps-masonry" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-masonry__item">
+          <a href="{{ product.url }}">
+            {% if product.featured_image %}
+              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
+            {% endif %}
+            <div class="ps-masonry__overlay">
+              <h3 class="ps-masonry__title">{{ product.title }}</h3>
+              <p class="ps-masonry__price">{{ product.price | money }}</p>
+            </div>
+          </a>
+          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% elsif layout == "carousel" %}
+    <div class="ps-carousel" style="--ps-accent: {{ accent_color }};" id="carousel-{{ block.id }}">
+      <button class="ps-carousel__btn ps-carousel__btn--prev" onclick="moveCarousel('{{ block.id }}', -1)">&#8249;</button>
+      <div class="ps-carousel__track">
+        {% for product in products limit: max_products %}
+          <div class="ps-carousel__item">
+            <a href="{{ product.url }}">
+              {% if product.featured_image %}
+                <img src="{{ product.featured_image | image_url: width: 300 }}" alt="{{ product.title }}" loading="lazy" />
+              {% endif %}
+              <h3 class="ps-carousel__title">{{ product.title }}</h3>
+              <p class="ps-carousel__price">{{ product.price | money }}</p>
+            </a>
+            <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
+          </div>
+        {% endfor %}
+      </div>
+      <button class="ps-carousel__btn ps-carousel__btn--next" onclick="moveCarousel('{{ block.id }}', 1)">&#8250;</button>
+    </div>
+
+  {% elsif layout == "modern-showcase" %}
+    <div class="ps-modern" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-modern__item">
+          <div class="ps-modern__image">
+            {% if product.featured_image %}
+              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
+            {% endif %}
+          </div>
+          <div class="ps-modern__info">
+            <h3 class="ps-modern__title">{{ product.title }}</h3>
+            <p class="ps-modern__desc">{{ product.description | strip_html | truncate: 100 }}</p>
+            <p class="ps-modern__price">{{ product.price | money }}</p>
+            <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}')">Add to Cart</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
   {% endif %}
 </div>
 
@@ -95,10 +147,15 @@ function addToCart(variantId) {
     body: JSON.stringify({ id: variantId, quantity: 1 })
   })
   .then(res => res.json())
-  .then(() => {
-    window.location.href = '/cart';
-  })
+  .then(() => { window.location.href = '/cart'; })
   .catch(err => console.error('Error adding to cart:', err));
+}
+
+function moveCarousel(blockId, direction) {
+  const carousel = document.getElementById('carousel-' + blockId);
+  const track = carousel.querySelector('.ps-carousel__track');
+  const itemWidth = track.querySelector('.ps-carousel__item').offsetWidth + 20;
+  track.scrollLeft += direction * itemWidth;
 }
 </script>
 
@@ -123,9 +180,12 @@ function addToCart(variantId) {
       "id": "layout",
       "label": "Layout Style",
       "options": [
-        { "value": "grid", "label": "Grid" },
-        { "value": "list", "label": "List" },
-        { "value": "hero", "label": "Hero" }
+        { "value": "grid", "label": "Grid Layout" },
+        { "value": "modern-showcase", "label": "Modern Showcase" },
+        { "value": "list", "label": "Compact List" },
+        { "value": "hero", "label": "Bold Hero" },
+        { "value": "masonry", "label": "Masonry Gallery (Pro)" },
+        { "value": "carousel", "label": "Carousel Spotlight (Pro)" }
       ],
       "default": "grid"
     },
