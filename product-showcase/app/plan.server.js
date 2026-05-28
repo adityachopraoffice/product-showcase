@@ -2,15 +2,8 @@ export async function savePlanToMetafield(admin, plan) {
   await admin.graphql(`
     mutation SetShopMetafield($metafields: [MetafieldsSetInput!]!) {
       metafieldsSet(metafields: $metafields) {
-        metafields {
-          id
-          key
-          value
-        }
-        userErrors {
-          field
-          message
-        }
+        metafields { id key value }
+        userErrors { field message }
       }
     }
   `, {
