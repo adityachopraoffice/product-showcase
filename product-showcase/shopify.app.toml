@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "b6a4e275c229d9a4af4005966ff4ccc5"
-application_url = "https://product-showcase-ten-blond.vercel.app"
+application_url = "https://productshowcase.hostnestic.online"
 embedded = true
 name = "product-showcase"
 
@@ -46,9 +46,9 @@ api_version = "2026-07"
 
 [auth]
 redirect_urls = [
-  "https://product-showcase-ten-blond.vercel.app/auth/callback",
-  "https://product-showcase-ten-blond.vercel.app/auth/shopify/callback",
-  "https://product-showcase-ten-blond.vercel.app/api/auth/callback"
+  "https://productshowcase.hostnestic.online/auth/callback",
+  "https://productshowcase.hostnestic.online/auth/shopify/callback",
+  "https://productshowcase.hostnestic.online/api/auth/callback"
 ]
 
 [build]

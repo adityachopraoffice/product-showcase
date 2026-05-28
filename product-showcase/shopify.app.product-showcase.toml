@@ -2,7 +2,7 @@
 
 client_id = "28f16c832dd3ed5ee7d24e5f0335d074"
 name = "product-showcase"
-application_url = "https://product-showcase-ten-blond.vercel.app"
+application_url = "https://productshowcase.hostnestic.online"
 embedded = true
 
 [build]
@@ -17,8 +17,8 @@ scopes = "write_metaobject_definitions,write_metaobjects,write_products"
 
 [auth]
 redirect_urls = [
-  "https://product-showcase-ten-blond.vercel.app/auth/callback",
-  "https://product-showcase-ten-blond.vercel.app/auth/shopify/callback",
-  "https://product-showcase-ten-blond.vercel.app/api/auth/callback",
-  "https://product-showcase-ten-blond.vercel.app/billing/confirm"
+  "https://productshowcase.hostnestic.online/auth/callback",
+  "https://productshowcase.hostnestic.online/auth/shopify/callback",
+  "https://productshowcase.hostnestic.online/api/auth/callback",
+  "https://productshowcase.hostnestic.online/billing/confirm"
 ]
