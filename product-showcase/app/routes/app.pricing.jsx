@@ -26,14 +26,13 @@ export const action = async ({ request }) => {
       update: { plan },
       create: { shop: session.shop, plan },
     });
-    const { savePlanToMetafield } = await import("../plan.server");
-    await savePlanToMetafield(admin, plan);
     return { success: true, plan };
   }
 
   const returnUrl = `${process.env.SHOPIFY_APP_URL}/billing/confirm?plan=${plan}&shop=${session.shop}`;
   const { createBillingCharge } = await import("../billing.server");
   const confirmationUrl = await createBillingCharge(admin, plan, returnUrl);
+
   return { confirmationUrl };
 };
 

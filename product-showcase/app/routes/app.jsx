@@ -6,32 +6,10 @@ import { authenticate } from "../shopify.server";
 import db from "../db.server";
 
 export const loader = async ({ request }) => {
-  const { session, admin } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const shopPlan = await db.shopPlan.findUnique({
     where: { shop: session.shop },
   });
-  const plan = shopPlan?.plan || "free";
-
-  // Save plan to metafield every time app loads
-  try {
-    await admin.graphql(`
-      mutation {
-        metafieldsSet(metafields: [{
-          namespace: "product_showcase",
-          key: "plan",
-          value: "${plan}",
-          type: "single_line_text_field",
-          ownerType: SHOP
-        }]) {
-          metafields { id }
-          userErrors { message }
-        }
-      }
-    `);
-  } catch (e) {
-    console.log("Metafield save failed:", e.message);
-  }
-
   return {
     apiKey: process.env.SHOPIFY_API_KEY || "",
     onboarded: shopPlan?.onboarded ?? false,
