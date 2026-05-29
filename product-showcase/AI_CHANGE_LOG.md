@@ -61,3 +61,25 @@ Updated `SHOPIFY_APP_URL` in Vercel Environment Variables to:
 - `prisma/schema.prisma`
 - `prisma/schema.postgres.prisma`
 - `app/routes/app._index.jsx`
+
+---
+
+## [2026-05-29] Add GDPR Compliance Webhooks & HMAC Signature Verification
+
+### Problem
+Shopify Partners automated check failed for "Provides mandatory compliance webhooks" and "Verifies webhooks with HMAC signatures".
+
+### Cause
+The app did not have subscription routes or configuration mapping for the mandatory compliance webhooks (`customers/data_request`, `customers/redact`, `shop/redact`), nor did it verify HMAC signatures for these webhooks.
+
+### Solution
+1. **Added Subscriptions:** Configured `compliance_topics` in `shopify.app.toml` and `shopify.app.product-showcase.toml` pointing to `/webhooks/gdpr`.
+2. **Created Handler Route:** Added `app/routes/webhooks.gdpr.jsx` to receive compliance events, utilize Shopify's native `authenticate.webhook(request)` to automatically verify HMAC signatures, and handle topics robustly (including clearing data on `shop/redact`).
+3. **Pushed Configuration:** Ran `shopify app deploy --allow-updates` to deploy the configuration and release a new app version to users.
+
+### New Files
+- `app/routes/webhooks.gdpr.jsx`
+
+### Changed Files
+- `shopify.app.toml`
+- `shopify.app.product-showcase.toml`
