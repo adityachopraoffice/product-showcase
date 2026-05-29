@@ -1,0 +1,257 @@
+{{ 'showcase.css' | asset_url | stylesheet_tag }}
+
+<div class="ps-showcase" id="ps-showcase-{{ section.id }}">
+  {% if section.settings.title != blank %}
+    <h2 class="ps-showcase__title">{{ section.settings.title }}</h2>
+  {% endif %}
+
+  {% assign layout = section.settings.layout %}
+  {% assign products = section.settings.collection.products %}
+  {% assign max_products = section.settings.max_products %}
+  {% assign accent_color = section.settings.accent_color %}
+  {% assign shop_plan = shop.metafields.product_showcase.plan.value | downcase | strip | default: "free" %}
+
+  {% if layout == "masonry" and shop_plan != "pro" %}
+    <div class="ps-upsell ps-upsell--pro">
+      <p class="ps-upsell__heading">Masonry Gallery requires Pro plan</p>
+      <p class="ps-upsell__body">Upgrade in your Product Showcase app.</p>
+    </div>
+
+  {% elsif layout == "compact-list" and shop_plan != "pro" %}
+    <div class="ps-upsell ps-upsell--pro">
+      <p class="ps-upsell__heading">Compact List requires Pro plan</p>
+      <p class="ps-upsell__body">Upgrade in your Product Showcase app.</p>
+    </div>
+
+  {% elsif layout == "bold-hero" and shop_plan == "free" %}
+    <div class="ps-upsell ps-upsell--starter">
+      <p class="ps-upsell__heading">Bold Hero requires Starter or Pro plan</p>
+      <p class="ps-upsell__body">Upgrade in your Product Showcase app.</p>
+    </div>
+
+  {% elsif layout == "carousel" and shop_plan == "free" %}
+    <div class="ps-upsell ps-upsell--starter">
+      <p class="ps-upsell__heading">Carousel Spotlight requires Starter or Pro plan</p>
+      <p class="ps-upsell__body">Upgrade in your Product Showcase app.</p>
+    </div>
+
+  {% elsif layout == "modern-showcase" %}
+    <div class="ps-modern" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-modern__item">
+          <a href="{{ product.url }}" class="ps-modern__image">
+            {% if product.featured_image %}
+              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
+            {% endif %}
+          </a>
+          <div class="ps-modern__info">
+            <h3 class="ps-modern__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+            <p class="ps-modern__desc">{{ product.description | strip_html | truncate: 100 }}</p>
+            <p class="ps-modern__price">{{ product.price | money }}</p>
+            <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}', this)">Add to Cart</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% elsif layout == "minimal-grid" %}
+    <div class="ps-minimal-grid" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-minimal-grid__item">
+          <a href="{{ product.url }}">
+            <div class="ps-minimal-grid__image">
+              {% if product.featured_image %}
+                <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
+              {% endif %}
+            </div>
+            <div class="ps-minimal-grid__info">
+              <h3 class="ps-minimal-grid__title">{{ product.title }}</h3>
+              <p class="ps-minimal-grid__price">{{ product.price | money }}</p>
+            </div>
+          </a>
+          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}', this)">Add to Cart</button>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% elsif layout == "bold-hero" %}
+    <div class="ps-hero" style="--ps-accent: {{ accent_color }};">
+      {% assign hero_product = products.first %}
+      {% if hero_product %}
+        <div class="ps-hero__main">
+          {% if hero_product.featured_image %}
+            <a href="{{ hero_product.url }}">
+              <img src="{{ hero_product.featured_image | image_url: width: 800 }}" alt="{{ hero_product.title }}" loading="lazy" class="ps-hero__image" />
+            </a>
+          {% endif %}
+          <div class="ps-hero__content">
+            <h2 class="ps-hero__title"><a href="{{ hero_product.url }}">{{ hero_product.title }}</a></h2>
+            <p class="ps-hero__desc">{{ hero_product.description | strip_html | truncate: 150 }}</p>
+            <p class="ps-hero__price">{{ hero_product.price | money }}</p>
+            <button class="ps-btn ps-btn--lg" onclick="addToCart('{{ hero_product.variants.first.id }}', this)">Add to Cart</button>
+          </div>
+        </div>
+        {% if products.size > 1 %}
+          <div class="ps-hero__related">
+            {% for product in products limit: max_products offset: 1 %}
+              <div class="ps-grid__item">
+                <a href="{{ product.url }}">
+                  {% if product.featured_image %}
+                    <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title }}" loading="lazy" />
+                  {% endif %}
+                  <p class="ps-grid__title">{{ product.title }}</p>
+                  <p class="ps-grid__price">{{ product.price | money }}</p>
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+
+  {% elsif layout == "carousel" %}
+    <div class="ps-carousel" style="--ps-accent: {{ accent_color }};" id="carousel-{{ section.id }}">
+      <button class="ps-carousel__btn ps-carousel__btn--prev" aria-label="Previous" onclick="moveCarousel('{{ section.id }}', -1)">&#8249;</button>
+      <div class="ps-carousel__track">
+        {% for product in products limit: max_products %}
+          <div class="ps-carousel__item">
+            <a href="{{ product.url }}">
+              {% if product.featured_image %}
+                <img src="{{ product.featured_image | image_url: width: 300 }}" alt="{{ product.title }}" loading="lazy" />
+              {% endif %}
+              <h3 class="ps-carousel__title">{{ product.title }}</h3>
+              <p class="ps-carousel__price">{{ product.price | money }}</p>
+            </a>
+            <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}', this)">Add to Cart</button>
+          </div>
+        {% endfor %}
+      </div>
+      <button class="ps-carousel__btn ps-carousel__btn--next" aria-label="Next" onclick="moveCarousel('{{ section.id }}', 1)">&#8250;</button>
+    </div>
+
+  {% elsif layout == "masonry" %}
+    <div class="ps-masonry" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-masonry__item">
+          <a href="{{ product.url }}">
+            {% if product.featured_image %}
+              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" loading="lazy" />
+            {% endif %}
+            <div class="ps-masonry__overlay">
+              <h3 class="ps-masonry__title">{{ product.title }}</h3>
+              <p class="ps-masonry__price">{{ product.price | money }}</p>
+            </div>
+          </a>
+          <button class="ps-btn" onclick="addToCart('{{ product.variants.first.id }}', this)">Add to Cart</button>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% elsif layout == "compact-list" %}
+    <div class="ps-list" style="--ps-accent: {{ accent_color }};">
+      {% for product in products limit: max_products %}
+        <div class="ps-list__item">
+          {% if product.featured_image %}
+            <a href="{{ product.url }}">
+              <img src="{{ product.featured_image | image_url: width: 100 }}" alt="{{ product.title }}" loading="lazy" class="ps-list__image" />
+            </a>
+          {% endif %}
+          <div class="ps-list__info">
+            <a href="{{ product.url }}"><h3 class="ps-list__title">{{ product.title }}</h3></a>
+            <p class="ps-list__price">{{ product.price | money }}</p>
+          </div>
+          <button class="ps-btn ps-btn--sm" onclick="addToCart('{{ product.variants.first.id }}', this)">Add to Cart</button>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% endif %}
+</div>
+
+<script>
+function addToCart(variantId, btn) {
+  var original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Adding...';
+  fetch('/cart/add.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: parseInt(variantId, 10), quantity: 1 })
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error('Cart error');
+    return res.json();
+  })
+  .then(function() {
+    btn.textContent = 'Added!';
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.textContent = original;
+    }, 1500);
+  })
+  .catch(function(err) {
+    console.error('Error adding to cart:', err);
+    btn.disabled = false;
+    btn.textContent = original;
+  });
+}
+
+function moveCarousel(sectionId, direction) {
+  var carousel = document.getElementById('carousel-' + sectionId);
+  if (!carousel) return;
+  var track = carousel.querySelector('.ps-carousel__track');
+  var item = track.querySelector('.ps-carousel__item');
+  if (!item) return;
+  var itemWidth = item.offsetWidth + parseInt(getComputedStyle(track).gap || 20, 10);
+  track.scrollBy({ left: direction * itemWidth, behavior: 'smooth' });
+}
+</script>
+
+{% schema %}
+{
+  "name": "Product Showcase",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Featured Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout Style",
+      "options": [
+        { "value": "modern-showcase", "label": "Modern Showcase (Free)" },
+        { "value": "minimal-grid",    "label": "Minimal Grid (Free)" },
+        { "value": "bold-hero",       "label": "Bold Hero (Starter+)" },
+        { "value": "carousel",        "label": "Carousel Spotlight (Starter+)" },
+        { "value": "masonry",         "label": "Masonry Gallery (Pro)" },
+        { "value": "compact-list",    "label": "Compact List (Pro)" }
+      ],
+      "default": "modern-showcase"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Max Products",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#5cb85c"
+    }
+  ]
+}
+{% endschema %}
