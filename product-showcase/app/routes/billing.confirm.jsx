@@ -8,7 +8,7 @@ export const loader = async ({ request }) => {
   const shop = url.searchParams.get("shop");
 
   if (!chargeId || !plan || !shop) {
-    return redirect(`https://${shop}/admin/apps`);
+    return redirect(`https://admin.shopify.com`);
   }
 
   await db.shopPlan.upsert({
@@ -17,5 +17,6 @@ export const loader = async ({ request }) => {
     create: { shop, plan },
   });
 
-  return redirect(`https://${shop}/admin/apps/product-showcase-14`);
+  const storeName = shop.replace(".myshopify.com", "");
+  return redirect(`https://admin.shopify.com/store/${storeName}/apps/product-showcase-14`);
 };
