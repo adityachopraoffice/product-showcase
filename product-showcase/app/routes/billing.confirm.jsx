@@ -1,4 +1,3 @@
-import { redirect } from "react-router";
 import db from "../db.server";
 
 export const loader = async ({ request }) => {
@@ -8,7 +7,9 @@ export const loader = async ({ request }) => {
   const shop = url.searchParams.get("shop");
 
   if (!chargeId || !plan || !shop) {
-    return redirect(`https://admin.shopify.com`);
+    return new Response(`<html><body><script>window.top.location.href = "https://admin.shopify.com";</script></body></html>`, {
+      headers: { "Content-Type": "text/html" },
+    });
   }
 
   await db.shopPlan.upsert({
@@ -18,5 +19,9 @@ export const loader = async ({ request }) => {
   });
 
   const storeName = shop.replace(".myshopify.com", "");
-  return redirect(`https://admin.shopify.com/store/${storeName}/apps/product-showcase-14`);
+  const destination = `https://admin.shopify.com/store/${storeName}/apps/product-showcase-14`;
+
+  return new Response(`<html><body><script>window.top.location.href = "${destination}";</script></body></html>`, {
+    headers: { "Content-Type": "text/html" },
+  });
 };
