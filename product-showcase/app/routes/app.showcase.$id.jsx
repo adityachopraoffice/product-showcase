@@ -3,6 +3,7 @@ import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { TEMPLATES } from "../data/templates";
 import { useState } from "react";
+import db from "../db.server";
 
 function TemplateShowcaseLogo({ width = 300 }) {
   return (
@@ -100,14 +101,17 @@ function getCtaStyles(tier) {
 }
 
 export const loader = async ({ request, params }) => {
-  await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const template = TEMPLATES.find((t) => t.id === params.id);
   if (!template) throw new Response("Template not found", { status: 404 });
+  
+  const shopPlan = await db.shopPlan.findUnique({
+    where: { shop: session.shop },
+  });
 
-  const searchParams = new URL(request.url).searchParams;
   return {
     template,
-    userPlan: resolveUserPlan(searchParams.get("plan")),
+    userPlan: shopPlan?.plan || "free",
   };
 };
 
