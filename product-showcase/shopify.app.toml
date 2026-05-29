@@ -3,7 +3,7 @@
 client_id = "b6a4e275c229d9a4af4005966ff4ccc5"
 application_url = "https://productshowcase.hostnestic.online"
 embedded = true
-name = "product-showcase"
+name = "Product-Showcase"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
