@@ -20,18 +20,17 @@ export const loader = async ({ request }) => {
     create: { shop, plan },
   });
 
+  // Get the real shop GID
+  const shopResponse = await admin.graphql(`query { shop { id } }`);
+  const shopData = await shopResponse.json();
+  const shopId = shopData.data.shop.id;
+
   // Write to Shopify metafield so the liquid block can read it
   await admin.graphql(`
     mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
       metafieldsSet(metafields: $metafields) {
-        metafields {
-          key
-          value
-        }
-        userErrors {
-          field
-          message
-        }
+        metafields { key value }
+        userErrors { field message }
       }
     }
   `, {
@@ -41,7 +40,7 @@ export const loader = async ({ request }) => {
         key: "plan",
         value: plan,
         type: "single_line_text_field",
-        ownerId: `gid://shopify/Shop/${shop.split('.')[0]}`,
+        ownerId: shopId,
       }],
     },
   });
