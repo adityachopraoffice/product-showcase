@@ -136,7 +136,11 @@ export default function Pricing() {
                       boxShadow: !isCurrent ? plan.id === "pro" ? "0 4px 12px rgba(156, 110, 222, 0.25)" : plan.id === "starter" ? "0 4px 12px rgba(0, 188, 212, 0.25)" : "none" : "none",
                     }}
                   >
-                    {isCurrent ? (plan.id === "free" ? "Free Plan" : "Current Plan") : plan.cta}
+                     {(() => {
+                      if (isCurrent) return plan.id === "free" ? "Free Plan" : "Current Plan ✓";
+                      if (plan.id === "free") return "Switch to Free";
+                      return plan.cta;
+                    })()}
                   </button>
                 </div>
               </div>
