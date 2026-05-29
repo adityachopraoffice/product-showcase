@@ -1,14 +1,14 @@
 {{ 'showcase.css' | asset_url | stylesheet_tag }}
 
-<div class="ps-showcase" id="ps-showcase-{{ section.id }}">
-  {% if section.settings.title != blank %}
-    <h2 class="ps-showcase__title">{{ section.settings.title }}</h2>
+<div class="ps-showcase" id="ps-showcase-{{ block.id }}">
+  {% if block.settings.title != blank %}
+    <h2 class="ps-showcase__title">{{ block.settings.title }}</h2>
   {% endif %}
 
-  {% assign layout = section.settings.layout %}
-  {% assign products = section.settings.collection.products %}
-  {% assign max_products = section.settings.max_products %}
-  {% assign accent_color = section.settings.accent_color %}
+  {% assign layout = block.settings.layout %}
+  {% assign products = block.settings.collection.products %}
+  {% assign max_products = block.settings.max_products %}
+  {% assign accent_color = block.settings.accent_color %}
   {% assign shop_plan = shop.metafields.product_showcase.plan.value | downcase | strip | default: "free" %}
 
   {% if layout == "masonry" and shop_plan != "pro" %}
@@ -110,8 +110,8 @@
     </div>
 
   {% elsif layout == "carousel" %}
-    <div class="ps-carousel" style="--ps-accent: {{ accent_color }};" id="carousel-{{ section.id }}">
-      <button class="ps-carousel__btn ps-carousel__btn--prev" aria-label="Previous" onclick="moveCarousel('{{ section.id }}', -1)">&#8249;</button>
+    <div class="ps-carousel" style="--ps-accent: {{ accent_color }};" id="carousel-{{ block.id }}">
+      <button class="ps-carousel__btn ps-carousel__btn--prev" aria-label="Previous" onclick="moveCarousel('{{ block.id }}', -1)">&#8249;</button>
       <div class="ps-carousel__track">
         {% for product in products limit: max_products %}
           <div class="ps-carousel__item">
@@ -126,7 +126,7 @@
           </div>
         {% endfor %}
       </div>
-      <button class="ps-carousel__btn ps-carousel__btn--next" aria-label="Next" onclick="moveCarousel('{{ section.id }}', 1)">&#8250;</button>
+      <button class="ps-carousel__btn ps-carousel__btn--next" aria-label="Next" onclick="moveCarousel('{{ block.id }}', 1)">&#8250;</button>
     </div>
 
   {% elsif layout == "masonry" %}
@@ -210,7 +210,7 @@ function moveCarousel(sectionId, direction) {
 {% schema %}
 {
   "name": "Product Showcase",
-  "target": "section",
+  "target": "block",
   "settings": [
     {
       "type": "text",
