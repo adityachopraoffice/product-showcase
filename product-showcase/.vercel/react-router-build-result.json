@@ -12,10 +12,15 @@
     "routeIdToServerBundleId": {
       "routes/webhooks.app.scopes_update": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/webhooks.app.uninstalled": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/billing.confirm": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/webhooks.gdpr": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/auth.login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/privacy": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/auth.$": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/_index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.additional": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.onboarding": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.showcases": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.showcase": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.showcase.$id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/app.pricing": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
@@ -46,11 +51,38 @@
           "runtime": "nodejs"
         }
       },
+      "routes/billing.confirm": {
+        "id": "routes/billing.confirm",
+        "parentId": "root",
+        "file": "app/routes/billing.confirm.jsx",
+        "path": "billing/confirm",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/webhooks.gdpr": {
+        "id": "routes/webhooks.gdpr",
+        "parentId": "root",
+        "file": "app/routes/webhooks.gdpr.jsx",
+        "path": "webhooks/gdpr",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
       "routes/auth.login": {
         "id": "routes/auth.login",
         "parentId": "root",
         "file": "app/routes/auth.login/route.jsx",
         "path": "auth/login",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/privacy": {
+        "id": "routes/privacy",
+        "parentId": "root",
+        "file": "app/routes/privacy.jsx",
+        "path": "privacy",
         "config": {
           "runtime": "nodejs"
         }
@@ -85,6 +117,24 @@
         "parentId": "routes/app",
         "file": "app/routes/app.additional.jsx",
         "path": "additional",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.onboarding": {
+        "id": "routes/app.onboarding",
+        "parentId": "routes/app",
+        "file": "app/routes/app.onboarding.jsx",
+        "path": "onboarding",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.showcases": {
+        "id": "routes/app.showcases",
+        "parentId": "routes/app",
+        "file": "app/routes/app.showcases.jsx",
+        "path": "showcases",
         "config": {
           "runtime": "nodejs"
         }
@@ -156,11 +206,29 @@
         "file": "routes/webhooks.app.uninstalled.jsx",
         "path": "webhooks/app/uninstalled"
       },
+      "routes/billing.confirm": {
+        "id": "routes/billing.confirm",
+        "parentId": "root",
+        "file": "routes/billing.confirm.jsx",
+        "path": "billing/confirm"
+      },
+      "routes/webhooks.gdpr": {
+        "id": "routes/webhooks.gdpr",
+        "parentId": "root",
+        "file": "routes/webhooks.gdpr.jsx",
+        "path": "webhooks/gdpr"
+      },
       "routes/auth.login": {
         "id": "routes/auth.login",
         "parentId": "root",
         "file": "routes/auth.login/route.jsx",
         "path": "auth/login"
+      },
+      "routes/privacy": {
+        "id": "routes/privacy",
+        "parentId": "root",
+        "file": "routes/privacy.jsx",
+        "path": "privacy"
       },
       "routes/auth.$": {
         "id": "routes/auth.$",
@@ -185,6 +253,18 @@
         "parentId": "routes/app",
         "file": "routes/app.additional.jsx",
         "path": "additional"
+      },
+      "routes/app.onboarding": {
+        "id": "routes/app.onboarding",
+        "parentId": "routes/app",
+        "file": "routes/app.onboarding.jsx",
+        "path": "onboarding"
+      },
+      "routes/app.showcases": {
+        "id": "routes/app.showcases",
+        "parentId": "routes/app",
+        "file": "routes/app.showcases.jsx",
+        "path": "showcases"
       },
       "routes/app.showcase": {
         "id": "routes/app.showcase",
@@ -237,9 +317,24 @@
             "path": "webhooks/app/uninstalled"
           },
           {
+            "id": "routes/billing.confirm",
+            "file": "routes/billing.confirm.jsx",
+            "path": "billing/confirm"
+          },
+          {
+            "id": "routes/webhooks.gdpr",
+            "file": "routes/webhooks.gdpr.jsx",
+            "path": "webhooks/gdpr"
+          },
+          {
             "id": "routes/auth.login",
             "file": "routes/auth.login/route.jsx",
             "path": "auth/login"
+          },
+          {
+            "id": "routes/privacy",
+            "file": "routes/privacy.jsx",
+            "path": "privacy"
           },
           {
             "id": "routes/auth.$",
@@ -260,6 +355,16 @@
                 "id": "routes/app.additional",
                 "file": "routes/app.additional.jsx",
                 "path": "additional"
+              },
+              {
+                "id": "routes/app.onboarding",
+                "file": "routes/app.onboarding.jsx",
+                "path": "onboarding"
+              },
+              {
+                "id": "routes/app.showcases",
+                "file": "routes/app.showcases.jsx",
+                "path": "showcases"
               },
               {
                 "id": "routes/app.showcase",

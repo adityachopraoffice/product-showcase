@@ -3,9 +3,15 @@ import { login } from "../../shopify.server";
 
 export const loader = async ({ request }) => {
   const url = new URL(request.url);
-  if (url.searchParams.get("shop")) {
+  
+  if (url.searchParams.get("shop") || url.searchParams.get("id_token")) {
     throw redirect(`/app?${url.searchParams.toString()}`);
   }
+
+  if (request.headers.get("Authorization")?.startsWith("Bearer ")) {
+    throw redirect("/app");
+  }
+
   return { showForm: Boolean(login) };
 };
 
