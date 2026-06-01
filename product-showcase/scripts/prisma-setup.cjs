@@ -5,10 +5,11 @@ const usePostgres = isVercel || hasPostgresUrl;
 const localSchema = "prisma/schema.prisma";
 const postgresSchema = "prisma/schema.postgres.prisma";
 const schema = usePostgres ? postgresSchema : localSchema;
-const commands = [
-  `npx prisma generate --schema ${schema}`,
-  `npx prisma migrate deploy --schema ${schema}`,
-];
-for (const command of commands) {
-  execSync(command, { stdio: "inherit" });
+
+// Only generate client during build, skip migrate
+execSync(`npx prisma generate --schema ${schema}`, { stdio: "inherit" });
+
+// Only run migrate if not in Vercel build environment
+if (!process.env.VERCEL) {
+  execSync(`npx prisma migrate deploy --schema ${schema}`, { stdio: "inherit" });
 }
