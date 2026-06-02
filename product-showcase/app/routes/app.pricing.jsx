@@ -26,6 +26,15 @@ export const action = async ({ request }) => {
       update: { plan },
       create: { shop: session.shop, plan },
     });
+    
+    const { cancelActiveBilling, updatePlanMetafield } = await import("../billing.server");
+    try {
+      await cancelActiveBilling(admin);
+      await updatePlanMetafield(admin, "free");
+    } catch (error) {
+      console.error("Failed to cancel billing or update metafield", error);
+    }
+    
     return { success: true, plan };
   }
 

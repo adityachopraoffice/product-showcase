@@ -153,3 +153,34 @@ export async function getPlanMetafield(admin) {
   const data = await response.json();
   return data?.data?.currentAppInstallation?.metafield?.value;
 }
+
+export async function cancelActiveBilling(admin) {
+  const response = await admin.graphql(`
+    query {
+      currentAppInstallation {
+        activeSubscriptions {
+          id
+        }
+      }
+    }
+  `);
+  const data = await response.json();
+  const subs = data?.data?.currentAppInstallation?.activeSubscriptions || [];
+  
+  if (subs.length > 0) {
+    for (const sub of subs) {
+      await admin.graphql(`
+        mutation AppSubscriptionCancel($id: ID!) {
+          appSubscriptionCancel(id: $id) {
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      `, {
+        variables: { id: sub.id }
+      });
+    }
+  }
+}
