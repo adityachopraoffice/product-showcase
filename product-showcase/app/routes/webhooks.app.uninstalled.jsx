@@ -12,5 +12,16 @@ export const action = async ({ request }) => {
     await db.session.deleteMany({ where: { shop } });
   }
 
+  // Reset the shop's plan to free upon uninstallation
+  try {
+    await db.shopPlan.upsert({
+      where: { shop },
+      create: { shop, plan: "free" },
+      update: { plan: "free" },
+    });
+  } catch (error) {
+    console.error("Failed to reset shop plan:", error);
+  }
+
   return new Response();
 };

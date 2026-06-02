@@ -6,10 +6,23 @@ import { authenticate } from "../shopify.server";
 import db from "../db.server";
 
 export const loader = async ({ request }) => {
-  const { session } = await authenticate.admin(request);
-  const shopPlan = await db.shopPlan.findUnique({
+  const { session, admin } = await authenticate.admin(request);
+  let shopPlan = await db.shopPlan.findUnique({
     where: { shop: session.shop },
   });
+
+  // Sync plan with Shopify billing state to catch reinstallations
+  const { checkActiveBilling } = await import("../billing.server");
+  const actualPlan = await checkActiveBilling(admin, session.shop);
+  
+  if (!shopPlan || shopPlan.plan !== actualPlan) {
+    shopPlan = await db.shopPlan.upsert({
+      where: { shop: session.shop },
+      create: { shop: session.shop, plan: actualPlan },
+      update: { plan: actualPlan },
+    });
+  }
+
   return {
     apiKey: process.env.SHOPIFY_API_KEY || "",
     onboarded: shopPlan?.onboarded ?? false,
