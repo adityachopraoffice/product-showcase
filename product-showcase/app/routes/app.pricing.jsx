@@ -1,6 +1,6 @@
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
-import { useLoaderData, useSubmit, useNavigate, useActionData } from "react-router";
+import { useLoaderData, useSubmit, useNavigate, useActionData, useRouteLoaderData } from "react-router";
 import { PLANS } from "../data/templates";
 import { useState, useEffect } from "react";
 import db from "../db.server";
@@ -8,11 +8,8 @@ import db from "../db.server";
 const validPlan = (plan) => ["free", "starter", "pro", "enterprise"].includes(plan) ? plan : "free";
 
 export const loader = async ({ request }) => {
-  const { session } = await authenticate.admin(request);
-  const shopPlan = await db.shopPlan.findUnique({
-    where: { shop: session.shop },
-  });
-  return { plans: PLANS, currentPlan: shopPlan?.plan || "free" };
+  await authenticate.admin(request);
+  return { plans: PLANS };
 };
 
 export const action = async ({ request }) => {
@@ -46,7 +43,9 @@ export const action = async ({ request }) => {
 };
 
 export default function Pricing() {
-  const { plans, currentPlan: initialPlan } = useLoaderData();
+  const { plans } = useLoaderData();
+  const appData = useRouteLoaderData("routes/app");
+  const initialPlan = appData?.userPlan || "free";
   const actionData = useActionData();
   const submit = useSubmit();
   const navigate = useNavigate();

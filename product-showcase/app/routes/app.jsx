@@ -41,6 +41,7 @@ export const loader = async ({ request }) => {
   return {
     apiKey: process.env.SHOPIFY_API_KEY || "",
     onboarded: shopPlan?.onboarded ?? false,
+    userPlan: shopPlan?.plan || "free",
   };
 };
 

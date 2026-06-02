@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLoaderData, useNavigate, useFetcher } from "react-router";
+import { useLoaderData, useNavigate, useFetcher, useRouteLoaderData } from "react-router";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { TEMPLATES } from "../data/templates";
@@ -9,15 +9,11 @@ import db from "../db.server";
 export const loader = async ({ request }) => {
   const { session } = await authenticate.admin(request);
   const shop = session?.shop || "test-store.myshopify.com";
-  const shopPlan = await db.shopPlan.findUnique({
-    where: { shop: session.shop },
-  });
-  const userPlan = shopPlan?.plan || "free";
   const showcases = await db.showcase.findMany({
     where: { shop: session.shop },
     orderBy: { createdAt: "desc" },
   });
-  return { templates: TEMPLATES, shop, userPlan, showcases };
+  return { templates: TEMPLATES, shop, showcases };
 };
 
 const isTemplateLocked = (templateTier, plan) => {
@@ -28,7 +24,9 @@ const isTemplateLocked = (templateTier, plan) => {
 };
 
 export default function Index() {
-  const { templates, shop, userPlan, showcases } = useLoaderData();
+  const { templates, shop, showcases } = useLoaderData();
+  const appData = useRouteLoaderData("routes/app");
+  const userPlan = appData?.userPlan || "free";
   const navigate = useNavigate();
   const showcaseFetcher = useFetcher();
   const [activeTab, setActiveTab] = useState("templates");
