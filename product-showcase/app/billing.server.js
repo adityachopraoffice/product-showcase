@@ -89,3 +89,53 @@ export async function createBillingCharge(admin, planId, returnUrl) {
 
   return result?.confirmationUrl;
 }
+
+export async function updatePlanMetafield(admin, planId) {
+  const response = await admin.graphql(`
+    mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
+      metafieldsSet(metafields: $metafields) {
+        metafields {
+          key
+          namespace
+          value
+          createdAt
+          updatedAt
+        }
+        userErrors {
+          field
+          message
+          code
+        }
+      }
+    }
+  `, {
+    variables: {
+      metafields: [
+        {
+          namespace: "product_showcase",
+          key: "plan",
+          type: "single_line_text_field",
+          value: planId,
+          ownerId: (await getAppInstallationId(admin)),
+        },
+      ],
+    },
+  });
+
+  const data = await response.json();
+  if (data?.data?.metafieldsSet?.userErrors?.length > 0) {
+    console.error("Failed to update plan metafield:", data.data.metafieldsSet.userErrors);
+  }
+}
+
+async function getAppInstallationId(admin) {
+  const response = await admin.graphql(`
+    query {
+      currentAppInstallation {
+        id
+      }
+    }
+  `);
+  const data = await response.json();
+  return data?.data?.currentAppInstallation?.id;
+}

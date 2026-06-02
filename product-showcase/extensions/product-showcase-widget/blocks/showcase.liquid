@@ -9,7 +9,7 @@
   {% assign products = block.settings.collection.products %}
   {% assign max_products = block.settings.max_products %}
   {% assign accent_color = block.settings.accent_color %}
-  {% assign shop_plan = shop.metafields.product_showcase.plan.value | downcase | strip | default: "free" %}
+  {% assign shop_plan = app.metafields.product_showcase.plan.value | downcase | strip | default: "free" %}
 
   {% if layout == "masonry" and shop_plan != "pro" %}
     <div class="ps-upsell ps-upsell--pro">

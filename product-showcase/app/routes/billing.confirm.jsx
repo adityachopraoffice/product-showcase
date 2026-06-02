@@ -18,6 +18,15 @@ export const loader = async ({ request }) => {
     create: { shop, plan },
   });
 
+  const { unauthenticated } = await import("../shopify.server");
+  const { updatePlanMetafield } = await import("../billing.server");
+  try {
+    const { admin } = await unauthenticated.admin(shop);
+    await updatePlanMetafield(admin, plan);
+  } catch (error) {
+    console.error("Failed to update metafield in billing confirm", error);
+  }
+
   const storeName = shop.replace(".myshopify.com", "");
   const destination = `https://admin.shopify.com/store/${storeName}/apps/product-showcase-14`;
 

@@ -12,7 +12,7 @@ export const loader = async ({ request }) => {
   });
 
   // Sync plan with Shopify billing state to catch reinstallations
-  const { checkActiveBilling } = await import("../billing.server");
+  const { checkActiveBilling, updatePlanMetafield } = await import("../billing.server");
   const actualPlan = await checkActiveBilling(admin, session.shop);
   
   if (!shopPlan || shopPlan.plan !== actualPlan) {
@@ -21,6 +21,11 @@ export const loader = async ({ request }) => {
       create: { shop: session.shop, plan: actualPlan },
       update: { plan: actualPlan },
     });
+    try {
+      await updatePlanMetafield(admin, actualPlan);
+    } catch (e) {
+      console.error("Failed to update metafield in app loader", e);
+    }
   }
 
   return {
