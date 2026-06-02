@@ -12,7 +12,7 @@ export const loader = async ({ request }) => {
   });
 
   // Sync plan with Shopify billing state to catch reinstallations
-  const { checkActiveBilling, updatePlanMetafield } = await import("../billing.server");
+  const { checkActiveBilling, updatePlanMetafield, getPlanMetafield } = await import("../billing.server");
   const actualPlan = await checkActiveBilling(admin, session.shop);
   
   if (!shopPlan || shopPlan.plan !== actualPlan) {
@@ -25,6 +25,16 @@ export const loader = async ({ request }) => {
       await updatePlanMetafield(admin, actualPlan);
     } catch (e) {
       console.error("Failed to update metafield in app loader", e);
+    }
+  } else {
+    // Metafield safety check for users who upgraded before the metafield feature was added
+    try {
+      const currentMetafieldPlan = await getPlanMetafield(admin);
+      if (currentMetafieldPlan !== actualPlan) {
+        await updatePlanMetafield(admin, actualPlan);
+      }
+    } catch (e) {
+      console.error("Failed to sync missing metafield in app loader", e);
     }
   }
 

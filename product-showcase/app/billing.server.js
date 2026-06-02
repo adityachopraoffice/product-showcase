@@ -139,3 +139,17 @@ async function getAppInstallationId(admin) {
   const data = await response.json();
   return data?.data?.currentAppInstallation?.id;
 }
+
+export async function getPlanMetafield(admin) {
+  const response = await admin.graphql(`
+    query {
+      currentAppInstallation {
+        metafield(namespace: "product_showcase", key: "plan") {
+          value
+        }
+      }
+    }
+  `);
+  const data = await response.json();
+  return data?.data?.currentAppInstallation?.metafield?.value;
+}
