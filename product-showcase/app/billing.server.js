@@ -2,13 +2,13 @@ import { PLANS } from "./data/templates";
 
 export const BILLING_PLANS = {
   starter: {
-    amount: 49,
+    amount: 20,
     currencyCode: "USD",
     interval: "EVERY_30_DAYS",
     trialDays: 7,
   },
   pro: {
-    amount: 90,
+    amount: 25,
     currencyCode: "USD",
     interval: "EVERY_30_DAYS",
     trialDays: 7,
@@ -48,7 +48,6 @@ export async function createBillingCharge(admin, planId, returnUrl) {
         returnUrl: $returnUrl
         trialDays: $trialDays
         lineItems: $lineItems
-        test: true
       ) {
         userErrors {
           field

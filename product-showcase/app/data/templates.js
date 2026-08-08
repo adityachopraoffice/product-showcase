@@ -79,7 +79,7 @@ export const PLANS = [
   {
     id: "starter",
     name: "Starter",
-    price: "49",
+    price: "20",
     period: "month",
     description: "Essential for growing storefronts",
     color: "#00BCD4",
@@ -96,7 +96,7 @@ export const PLANS = [
   {
     id: "pro",
     name: "Pro",
-    price: "90",
+    price: "25",
     period: "month",
     description: "Unlock the ultimate showcase experience",
     color: "#9C6ADE",
