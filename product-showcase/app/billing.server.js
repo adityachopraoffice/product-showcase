@@ -2,13 +2,13 @@ import { PLANS } from "./data/templates";
 
 export const BILLING_PLANS = {
   starter: {
-    amount: 20,
+    amount: 89,
     currencyCode: "USD",
     interval: "EVERY_30_DAYS",
     trialDays: 7,
   },
   pro: {
-    amount: 25,
+    amount: 109,
     currencyCode: "USD",
     interval: "EVERY_30_DAYS",
     trialDays: 7,
